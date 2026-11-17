@@ -5,6 +5,10 @@
     "entries": [
       {
         "category": "enhancement",
+        "title": "Update TypeScript references in next-env.d.ts files"
+      },
+      {
+        "category": "enhancement",
         "title": "Simplify .env.example by removing unused variables and adding SERVER_URL",
         "scope": "env"
       },

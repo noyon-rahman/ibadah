@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from 'fs';
-import { resolve } from 'path';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 import { Release } from '@/modules/release/release.model';
 import { logger } from '@/utils/logger';
@@ -40,8 +41,16 @@ export const releaseService = {
    * Idempotent — upserts by version and updates entries/dates on every startup.
    */
   async seedReleases(): Promise<void> {
-    // Try multiple paths for the changelog file
+    // Resolve relative to this module, not process.cwd(): the compiled file sits
+    // beside changelog.json in dist/, but the process may be started from the
+    // repo root (e.g. in a container), where a cwd-relative lookup misses it.
+    const moduleDir = dirname(fileURLToPath(import.meta.url));
+
+    // Try multiple paths for the changelog file. The build emits it to
+    // dist/changelog.json while this module lands in dist/modules/release/,
+    // so walk up two levels before falling back to cwd-relative lookups.
     const candidates = [
+      resolve(moduleDir, '..', '..', 'changelog.json'), // dist/changelog.json
       resolve(process.cwd(), 'dist', 'changelog.json'),
       resolve(process.cwd(), 'src', 'data', 'changelog.json'),
       resolve(process.cwd(), 'changelog.json'),
