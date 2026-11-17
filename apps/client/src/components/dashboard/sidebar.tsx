@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { Link, usePathname } from '@/i18n/routing';
 import { BrandMark } from '@/components/shared/brand-mark';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import { useUiStore } from '@/store/ui-store';
 import {
   Tooltip,

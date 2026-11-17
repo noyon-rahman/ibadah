@@ -7,8 +7,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
+  Label,
+} from '@ibadah/ui';
 import { listSections, type HadithMetadata } from '@/lib/hadith/hadith-api';
 
 interface Props {

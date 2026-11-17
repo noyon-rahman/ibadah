@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter, usePathname } from '@/i18n/routing';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import { useLogout } from '@/hooks/use-auth';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { ThemeToggle } from '@/components/layout/theme-toggle';

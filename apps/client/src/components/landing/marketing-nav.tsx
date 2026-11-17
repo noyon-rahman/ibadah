@@ -10,7 +10,7 @@ import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { BrandMark } from '@/components/shared/brand-mark';
 import { useCurrentUser } from '@/hooks/use-auth';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * Top-of-page marketing nav. Becomes opaque + bordered after the user

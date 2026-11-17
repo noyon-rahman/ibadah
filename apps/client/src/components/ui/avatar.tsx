@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import { getInitials, isUsableImageUrl } from '@/lib/avatar-utils';
 
 /**

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { Reveal } from '@/components/shared/reveal';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 export function AiFaq() {
   const t = useTranslations();

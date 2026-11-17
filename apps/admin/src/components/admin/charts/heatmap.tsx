@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * GitHub-style activity heatmap. Zero dependencies — pure CSS grid

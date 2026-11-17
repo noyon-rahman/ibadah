@@ -1,7 +1,7 @@
 # Ibadah Design System
 
-> One design language across `client/` (user-facing app), `admin/` (admin panel)
-> and `server/` (API contracts). When in doubt, mirror the client.
+> One design language across `apps/client/` (user-facing app), `apps/admin/` (admin panel)
+> and `apps/api/` (API contracts). When in doubt, mirror the client.
 
 This document captures the **shared** decisions: tokens, typography,
 components, motion, API conventions, and layout shells. New surfaces should
@@ -16,7 +16,7 @@ adopt these patterns instead of reinventing them.
 | **Name** | Ibadah |
 | **Tagline** | Journey Towards Allah |
 | **Voice** | Calm, reverent, modern. Encouragement over gamification. |
-| **Logomark** | 8-pointed Khatim Sulaymani star + crescent + accent star, in a rounded gradient frame. See `client/src/components/shared/brand-logo.tsx`. |
+| **Logomark** | 8-pointed Khatim Sulaymani star + crescent + accent star, in a rounded gradient frame. See `apps/client/src/components/shared/brand-logo.tsx`. |
 | **Direction** | LTR by default; full RTL support for `ar`. Layouts must be `dir`-aware. |
 
 The mark is the **only** image asset that is universal across surfaces.
@@ -167,7 +167,7 @@ Every server response uses the envelope:
 
 The client `api()` helper unwraps `data` and throws `ApiClientError` on
 non-2xx or `success: false`. The admin uses **the exact same helper**
-(copied verbatim into `admin/src/lib/api.ts`) so both apps fail in the
+(copied verbatim into `apps/admin/src/lib/api.ts`) so both apps fail in the
 same shape.
 
 ### 8.1 Auth flow (dual-mode: web cookies + mobile tokens)
@@ -306,7 +306,7 @@ All under `/api/v1/admin/*`, guarded by `requireAuth + requireAdmin`:
 
 The two analytics endpoints return everything the corresponding page
 needs in a **single round-trip**. The aggregations live in
-`server/src/modules/admin/analytics.service.ts` and use Mongo `$facet`
+`apps/api/src/modules/admin/analytics.service.ts` and use Mongo `$facet`
 + parallel queries to keep latency reasonable. All daily series are
 **zero-filled** so the frontend never has to handle gaps.
 
@@ -316,7 +316,7 @@ There is no UI to grant admin from outside. The first admin is created
 out-of-band by the seed script:
 
 ```bash
-# in server/
+# in apps/api/
 ADMIN_EMAIL=admin@ibadah.local \
 ADMIN_PASSWORD=change-me \
 ADMIN_NAME='Ibadah Admin' \

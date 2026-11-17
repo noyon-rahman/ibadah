@@ -12,7 +12,7 @@
  *   - Normalises every failure into an `ApiClientError` so callers can
  *     branch on `.status` without poking at axios internals.
  */
-import axios, { AxiosError, type AxiosInstance } from 'axios';
+import axios, { type AxiosError, type AxiosInstance } from 'axios';
 
 export const baseURL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
 

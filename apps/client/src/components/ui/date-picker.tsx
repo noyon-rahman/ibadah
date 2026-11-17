@@ -4,7 +4,7 @@ import * as React from 'react';
 import { CalendarDays } from 'lucide-react';
 import { Calendar } from './calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 interface DatePickerProps {
   value: string; // YYYY-MM-DD

@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * Section wrapper used by every analytics chart. Provides the same

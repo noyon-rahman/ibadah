@@ -31,7 +31,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { AdminReportDownload } from '@/components/admin/report-download';
 import { systemApi } from '@/lib/admin/admin-api';
 import { useCurrentAdmin } from '@/hooks/use-auth';
-import { formatRelative } from '@/lib/utils';
+import { formatRelative } from '@ibadah/shared';
 
 /**
  * Single-screen operator overview. Pulls a pre-aggregated snapshot via

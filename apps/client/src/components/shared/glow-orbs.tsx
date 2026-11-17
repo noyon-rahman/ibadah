@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * Layered, slowly-breathing color orbs used as a luminous backdrop behind

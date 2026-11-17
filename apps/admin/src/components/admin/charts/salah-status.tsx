@@ -2,7 +2,7 @@
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * Donut chart of salah Fard timing status. The five non-pending

@@ -4,6 +4,7 @@
  * the server starts exposing real `/admin/*` endpoints (design.md §10.2).
  */
 import { api } from '../api';
+import type { PrayerStatus, SalahScoring } from '@ibadah/core';
 
 /* ----------------------------- Stats ----------------------------- */
 
@@ -24,22 +25,8 @@ export const statsApi = {
 
 /* ----------------------------- Profile / Scoring ----------------------------- */
 
-export interface ScoringConfig {
-  fardAwwal: number;
-  fardMid: number;
-  fardLast: number;
-  fardLate: number;
-  fardMissed: number;
-  sunnahBefore: number;
-  sunnahAfter: number;
-  nafl: number;
-  witr: number;
-  jummahFard: number;
-  jummahKhutbah: number;
-  jummahEarly: number;
-  jummahSurahKahf: number;
-  jummahGhusl: number;
-}
+/** Re-exported from `@ibadah/core` (same shape as `SalahScoring`). */
+export type ScoringConfig = SalahScoring;
 
 export interface Profile {
   id: string;
@@ -67,13 +54,8 @@ export const profileApi = {
 
 /* ----------------------------- Salah ----------------------------- */
 
-export type PrayerStatus =
-  | 'pending'
-  | 'on_time_awwal'
-  | 'on_time_mid'
-  | 'on_time_last'
-  | 'late'
-  | 'missed';
+/** Re-exported from `@ibadah/core` so it stays in lock-step with the server. */
+export type { PrayerStatus };
 
 export interface PrayerEntry {
   fard: { status: PrayerStatus };
@@ -215,7 +197,7 @@ export const analyticsApi = {
 
 export type UserRole = 'user' | 'admin';
 
-/** Mirrors server's `SafeUser` (see server/src/modules/user/user.interface.ts). */
+/** Mirrors the API's `SafeUser` (see apps/api/src/modules/user/user.interface.ts). */
 export interface SafeUser {
   id: string;
   email: string;

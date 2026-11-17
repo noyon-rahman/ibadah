@@ -6,9 +6,19 @@ import { useTranslations } from 'next-intl';
 import { Sparkles } from 'lucide-react';
 
 import { PageHeader } from '@/components/admin/page-header';
-import { AIPanel } from '@/components/ai/ai-panel';
-import { ChatHistorySidebar } from '@/components/ai/chat-history-sidebar';
+import { AIPanel, ChatHistorySidebar } from '@ibadah/ui';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
+import { useAiChat } from '@/hooks/use-ai-chat';
+import { Button } from '@/components/ui/button';
+
+/**
+ * Empty-transcript copy for the full-page assistant. Declared at module
+ * scope so the panel receives a stable object reference across renders.
+ */
+const PANEL_EMPTY_STATE = {
+  title: 'Ibadah admin copilot',
+  description: "Ask about any admin page, or paste metrics and I'll chart them.",
+};
 
 /**
  * Full-page admin assistant. Reuses the same `<AIPanel>` as the
@@ -151,6 +161,7 @@ export default function AdminAssistantPage() {
           onNewSession={handleNewSession}
           onDeleteSession={handleDeleteSession}
           onRenameSession={renameSession}
+          ButtonComponent={Button}
         />
         <div className="flex min-w-0 flex-1 flex-col">
           <AIPanel
@@ -163,12 +174,15 @@ export default function AdminAssistantPage() {
             density="comfortable"
             autoFocus
             greeting={t('greeting')}
+            emptyState={PANEL_EMPTY_STATE}
             suggestions={[
               t('suggest_health'),
               t('suggest_engagement'),
               t('suggest_endpoint'),
               t('suggest_moderation'),
             ]}
+            useChat={useAiChat}
+            ButtonComponent={Button}
           />
         </div>
       </div>

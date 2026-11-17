@@ -24,12 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ibadah/ui';
 import {
   moderationApi,
   type ModerationFlag,
@@ -37,7 +32,7 @@ import {
   type ModerationTargetType,
 } from '@/lib/admin/admin-api';
 import { ApiClientError } from '@/lib/api';
-import { formatRelative, cn } from '@/lib/utils';
+import { formatRelative, cn } from '@ibadah/shared';
 
 const TYPE_META: Record<
   ModerationTargetType,

@@ -13,12 +13,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@ibadah/ui';
 import { getDateRangeForPeriod, type ReportPeriod } from '@/lib/report/report-api';
 import { generateUserReportPDF } from '@/lib/pdf-generator';
 import { statsApi } from '@/lib/stats/stats-api';
 import { useCurrentUser } from '@/hooks/use-auth';
-import { toDayKey } from '@/lib/utils';
+import { toDayKey } from '@ibadah/shared';
 
 export function ReportDownload() {
   const t = useTranslations('Reports');

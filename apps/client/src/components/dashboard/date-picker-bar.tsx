@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
-import { toDayKey } from '@/lib/utils';
+import { toDayKey } from '@ibadah/shared';
 
 interface Props {
   date: string; // YYYY-MM-DD

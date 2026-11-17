@@ -1,4 +1,4 @@
-import { cn, getInitials } from '@/lib/utils';
+import { cn, getInitials } from '@ibadah/shared';
 
 const isUsableImageUrl = (v?: string | null): v is string =>
   !!v && (v.startsWith('http') || v.startsWith('data:image/'));

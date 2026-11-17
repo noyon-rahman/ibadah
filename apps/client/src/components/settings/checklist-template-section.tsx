@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Input } from '@ibadah/ui';
 import { useUpdateProfile } from '@/hooks/use-user';
 import { ApiClientError } from '@/lib/api';
 import { ListTodo } from 'lucide-react';

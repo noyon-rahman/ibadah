@@ -1,0 +1,48 @@
+{
+  "name": "@ibadah/ui",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared UI primitives for the Ibadah monorepo. Only components that are byte-identical across apps live here.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@ibadah/core": "workspace:*",
+    "@ibadah/shared": "workspace:*",
+    "@radix-ui/react-dropdown-menu": "^2.1.4",
+    "@radix-ui/react-label": "^2.1.1",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-tabs": "^1.1.2",
+    "lucide-react": "^0.469.0",
+    "react-markdown": "^10.1.0",
+    "recharts": "^2.15.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@ibadah/eslint-config": "workspace:*",
+    "@ibadah/typescript-config": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3"
+  }
+}

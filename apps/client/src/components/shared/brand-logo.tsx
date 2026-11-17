@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /** Canonical brand badge — `/public/icons/icon-512.svg`. */
 const BRAND_LOGO_SRC = '/icons/icon-512.svg';

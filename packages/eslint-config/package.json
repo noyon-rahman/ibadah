@@ -1,0 +1,32 @@
+{
+  "name": "@ibadah/eslint-config",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared ESLint flat config presets for the Ibadah monorepo.",
+  "type": "module",
+  "exports": {
+    "./base": "./base.js",
+    "./next": "./next.js",
+    "./node": "./node.js"
+  },
+  "scripts": {
+    "build": "node -e \"process.exit(0)\"",
+    "lint": "eslint .",
+    "typecheck": "node -e \"process.exit(0)\"",
+    "clean": "rm -rf .turbo"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.18.0",
+    "globals": "^15.14.0",
+    "typescript-eslint": "^8.20.0"
+  },
+  "peerDependencies": {
+    "eslint": ">=9",
+    "eslint-config-next": ">=16"
+  },
+  "peerDependenciesMeta": {
+    "eslint-config-next": {
+      "optional": true
+    }
+  }
+}

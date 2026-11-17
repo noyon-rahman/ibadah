@@ -39,7 +39,7 @@ import { useCurrentUser, useLogout } from '@/hooks/use-auth';
 import { usePublicSiteConfig } from '@/hooks/use-site-config';
 import { hasSeenRecruiterIntro } from '@/lib/recruiter-intro-prefs';
 import { RECRUITER_INTRO_DISMISSED_EVENT } from '@/components/landing/recruiter-intro-launcher';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 type Tab = 'home' | 'explore' | 'account';
 

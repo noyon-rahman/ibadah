@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 interface CalendarProps {
   /** Selected date in YYYY-MM-DD format. */

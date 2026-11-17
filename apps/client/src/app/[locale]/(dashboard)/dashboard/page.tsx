@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { CalendarRange, Flame, TrendingUp } from 'lucide-react';
+import { CalendarRange, type Flame, TrendingUp } from 'lucide-react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { TodayHero } from '@/components/dashboard/today-hero';
@@ -18,7 +18,7 @@ import { ReportDownload } from '@/components/dashboard/report-download';
 import { useCurrentUser } from '@/hooks/use-auth';
 import { useProfile } from '@/hooks/use-user';
 import { statsApi } from '@/lib/stats/stats-api';
-import { toDayKey } from '@/lib/utils';
+import { toDayKey } from '@ibadah/shared';
 import { maxDailyPoints } from '@/lib/salah-scoring';
 import { SALAH_DEFAULT_SCORING } from '@/lib/salah-defaults';
 

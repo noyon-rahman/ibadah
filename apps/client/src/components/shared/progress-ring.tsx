@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * A circular progress indicator with a soft gradient stroke, an optional

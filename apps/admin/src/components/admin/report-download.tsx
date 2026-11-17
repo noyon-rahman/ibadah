@@ -15,7 +15,7 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@ibadah/ui';
 import {
   getDateRangeForPeriod,
   type ReportPeriod,
@@ -23,7 +23,7 @@ import {
 } from '@/lib/report/report-api';
 import { generateAdminReportPDF, type AdminReportData } from '@/lib/pdf-generator';
 import { analyticsApi } from '@/lib/admin/admin-api';
-import { toDayKey } from '@/lib/utils';
+import { toDayKey } from '@ibadah/shared';
 
 export function AdminReportDownload() {
   const t = useTranslations('Reports');

@@ -109,6 +109,8 @@
     "loginFooter": "শুধুমাত্র অনুমোদিত কর্মীদের জন্য",
     "email": "ইমেইল",
     "password": "পাসওয়ার্ড",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "আপনার পাসওয়ার্ড লিখুন",
     "signIn": "সাইন ইন",
     "signedIn": "সাইন ইন হয়েছে",
     "couldNotSignIn": "সাইন ইন করা যায়নি",

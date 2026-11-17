@@ -1,4 +1,13 @@
 @import 'tailwindcss';
+
+/*
+ * Tailwind v4 only scans the project that owns this stylesheet, so classes
+ * used inside the shared `@ibadah/ui` package (the AI widget's positioning,
+ * sizing, and panel layout) would never be generated. Point the scanner at
+ * the package sources explicitly.
+ */
+@source '../../../../packages/ui/src';
+
 @plugin "tailwindcss-animate";
 
 /* shadcn/ui dark variant trigger */

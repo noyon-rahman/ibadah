@@ -1,0 +1,12 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# pnpm >=11 blocks dependency build scripts by default and fails the
+# install on anything unreviewed. These need theirs to produce working
+# native bindings.
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  esbuild: true
+  sharp: true

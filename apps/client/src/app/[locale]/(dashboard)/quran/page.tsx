@@ -10,12 +10,11 @@ import { DatePickerBar } from '@/components/dashboard/date-picker-bar';
 import { NumberStepper } from '@/components/shared/number-stepper';
 import { GeometricPattern } from '@/components/shared/geometric-pattern';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Input, Label } from '@ibadah/ui';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useQuranDay, useUpsertQuranDay } from '@/hooks/use-quran';
-import { toDayKey } from '@/lib/utils';
+import { toDayKey } from '@ibadah/shared';
 import { ApiClientError } from '@/lib/api';
 
 export default function QuranPage() {

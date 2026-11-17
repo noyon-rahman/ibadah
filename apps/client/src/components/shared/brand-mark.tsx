@@ -1,5 +1,5 @@
 import { BrandLogo } from './brand-logo';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * Backwards-compatible wrapper around `BrandLogo`. Kept so existing

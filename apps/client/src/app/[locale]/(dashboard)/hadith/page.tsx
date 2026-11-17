@@ -19,7 +19,7 @@ import {
   type HadithEntry,
   type HadithSectionDetail,
 } from '@/lib/hadith/hadith-api';
-import { toDayKey } from '@/lib/utils';
+import { toDayKey } from '@ibadah/shared';
 
 const PAGE_SIZE = 15;
 

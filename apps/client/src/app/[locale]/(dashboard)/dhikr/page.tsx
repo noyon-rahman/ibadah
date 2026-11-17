@@ -9,10 +9,9 @@ import { PageHeader } from '@/components/dashboard/page-header';
 import { DatePickerBar } from '@/components/dashboard/date-picker-bar';
 import { GeometricPattern } from '@/components/shared/geometric-pattern';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Input, Label } from '@ibadah/ui';
 import { useDhikrEntries } from '@/hooks/use-dhikr';
-import { toDayKey, cn } from '@/lib/utils';
+import { toDayKey, cn } from '@ibadah/shared';
 import type { DhikrEntry } from '@/lib/dhikr/dhikr-api';
 
 export default function DhikrPage() {

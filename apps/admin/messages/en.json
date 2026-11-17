@@ -110,6 +110,8 @@
     "loginFooter": "Authorized personnel only",
     "email": "Email",
     "password": "Password",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Enter your password",
     "signIn": "Sign in",
     "signedIn": "Signed in",
     "couldNotSignIn": "Could not sign in",

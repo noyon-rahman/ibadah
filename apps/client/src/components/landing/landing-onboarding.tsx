@@ -29,7 +29,7 @@ import {
   saveOnboardingPrefs,
 } from '@/components/landing/landing-onboarding-prefs';
 import { persistOnboardingToServer } from '@/lib/onboarding/onboarding-api';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 export { LANDING_ONBOARDING_KEY } from '@/components/landing/landing-onboarding-prefs';
 

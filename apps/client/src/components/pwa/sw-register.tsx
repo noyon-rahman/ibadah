@@ -103,7 +103,6 @@ export function ServiceWorkerRegister() {
       } catch (err) {
         // Don't surface to the user — a failed SW registration shouldn't
         // break the app. Log for ops.
-        // eslint-disable-next-line no-console
         console.warn('[Ibadah] Service worker registration failed:', err);
       }
     };

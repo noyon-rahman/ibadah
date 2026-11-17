@@ -109,6 +109,8 @@
     "loginFooter": "للموظفين المعتمدين فقط",
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "أدخل كلمة المرور",
     "signIn": "تسجيل الدخول",
     "signedIn": "تم تسجيل الدخول",
     "couldNotSignIn": "تعذر تسجيل الدخول",

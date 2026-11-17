@@ -10,9 +10,7 @@ import { Loader2, ShieldCheck } from 'lucide-react';
 
 import { AuthShell } from '@/components/auth/auth-shell';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { PasswordInput } from '@/components/ui/password-input';
-import { Label } from '@/components/ui/label';
+import { Input, PasswordInput, Label } from '@ibadah/ui';
 import { useLogin } from '@/hooks/use-auth';
 import { ApiClientError } from '@/lib/api';
 
@@ -60,7 +58,13 @@ export default function AdminLoginPage() {
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="email">{t('email')}</Label>
-          <Input id="email" type="email" autoComplete="email" {...register('email')} />
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder={t('emailPlaceholder')}
+            {...register('email')}
+          />
           {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
         </div>
 
@@ -69,6 +73,7 @@ export default function AdminLoginPage() {
           <PasswordInput
             id="password"
             autoComplete="current-password"
+            placeholder={t('passwordPlaceholder')}
             {...register('password')}
           />
           {errors.password && (

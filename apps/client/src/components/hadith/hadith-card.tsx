@@ -5,7 +5,7 @@ import { BookMarked, Hash } from 'lucide-react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import type { HadithEntry, HadithGrade } from '@/lib/hadith/hadith-api';
 
 interface Props {

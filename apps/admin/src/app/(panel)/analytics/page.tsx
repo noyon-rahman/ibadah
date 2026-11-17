@@ -28,7 +28,7 @@ import {
 import { ScoreHistogram } from '@/components/admin/charts/score-histogram';
 import { PillarBreakdown } from '@/components/admin/charts/pillar-breakdown';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ibadah/ui';
 import { AdminReportDownload } from '@/components/admin/report-download';
 import { analyticsApi } from '@/lib/admin/admin-api';
 

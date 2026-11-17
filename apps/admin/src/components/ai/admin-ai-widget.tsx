@@ -4,7 +4,36 @@ import { useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { AIWidget } from './ai-widget';
+import { AIWidget } from '@ibadah/ui';
+import { useAiChat } from '@/hooks/use-ai-chat';
+import { Button } from '@/components/ui/button';
+
+/**
+ * Admin placement for the floating widget. The admin app has no mobile
+ * bottom nav, so only the `floating` (not `lifted`) offsets ever apply;
+ * `lifted` is kept identical to the old shared defaults.
+ */
+const ADMIN_LAYOUT = {
+  lifted: {
+    button: 'bottom-[calc(5.25rem+env(safe-area-inset-bottom))] lg:bottom-6',
+    panel:
+      'bottom-[calc(9rem+env(safe-area-inset-bottom))] sm:bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-24',
+  },
+  floating: {
+    button: 'bottom-[calc(1rem+env(safe-area-inset-bottom))] lg:bottom-6',
+    panel: 'bottom-[calc(4.75rem+env(safe-area-inset-bottom))] lg:bottom-24',
+  },
+};
+
+/**
+ * Empty-transcript copy for the floating admin widget. Restores the
+ * admin-specific empty state that the shared panel would otherwise
+ * render as the client's "Ask me anything about Ibadah" copy.
+ */
+const ADMIN_EMPTY_STATE = {
+  title: 'Ibadah admin copilot',
+  description: "Ask about any admin page, or paste metrics and I'll chart them.",
+};
 
 /**
  * Admin-flavored wrapper around `<AIWidget>`. Responsibilities:
@@ -97,12 +126,18 @@ export function AdminAIWidget() {
       surface="admin"
       buildContext={buildContext}
       liftAboveBottomNav={false}
+      layout={ADMIN_LAYOUT}
+      title="Admin copilot"
+      subtitle="Internal · Ibadah operations"
+      emptyState={ADMIN_EMPTY_STATE}
       greeting="Hi — I'm the Ibadah admin copilot. Ask about any page, paste metrics for a chart, or describe a question and I'll point you at the right endpoint."
       suggestions={[
         'Summarize today’s health snapshot',
         'Chart DAU vs WAU vs MAU',
         'Where do I find the audit log?',
       ]}
+      useChat={useAiChat}
+      ButtonComponent={Button}
     />
   );
 }

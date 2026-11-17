@@ -1,7 +1,7 @@
 # Ibadah — Admin Panel
 
 Internal-facing administration panel for the Ibadah application. Mirrors the
-visual identity of `client/` and consumes the same REST API in `server/`.
+visual identity of `apps/client/` and consumes the same REST API in `apps/api/`.
 
 ## Stack
 
@@ -17,8 +17,11 @@ visual identity of `client/` and consumes the same REST API in `server/`.
 cp .env.example .env
 # set NEXT_PUBLIC_API_URL to your running server (e.g. http://localhost:5000/api/v1)
 
-npm install
-npm run dev   # http://localhost:3001
+# from the repo root — installs the whole workspace
+pnpm install
+
+# run just this app
+pnpm --filter ibadah-admin dev   # http://localhost:3001
 ```
 
 ## Authentication

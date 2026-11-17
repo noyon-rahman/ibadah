@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Sparkles, type LucideIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import type { JummahEntry, PrayerEntry, PrayerName } from '@/lib/salah/salah-api';
 import type { SalahScoring } from '@/lib/user/user-api';
 import {

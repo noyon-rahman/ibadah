@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * Ibadah logomark — verbatim copy of client/src/components/shared/brand-logo.tsx

@@ -1,15 +1,10 @@
 import { api } from '../api';
 import { authStorage } from '../auth/auth-storage';
 
-export type PrayerName = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
+/** Re-exported from `@ibadah/core` so it stays in lock-step with the server. */
+import type { PrayerName, PrayerStatus } from '@ibadah/core';
 
-export type PrayerStatus =
-  | 'pending'
-  | 'on_time_awwal'
-  | 'on_time_mid'
-  | 'on_time_last'
-  | 'late'
-  | 'missed';
+export type { PrayerName, PrayerStatus };
 
 export interface FardEntry {
   status: PrayerStatus;

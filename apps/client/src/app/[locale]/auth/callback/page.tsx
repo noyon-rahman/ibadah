@@ -12,7 +12,7 @@ import { ApiClientError } from '@/lib/api';
 import { BrandMark } from '@/components/shared/brand-mark';
 import { GeometricPattern } from '@/components/shared/geometric-pattern';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * OAuth callback handler.
@@ -37,6 +37,23 @@ import { cn } from '@/lib/utils';
 type Status = 'loading' | 'success' | 'error';
 
 const SAFE_RETURN_TO = /^\/[^\s/](?!\/)[^\s]*$/;
+
+/**
+ * Guards the one-time code exchange against React StrictMode.
+ *
+ * In development StrictMode mounts, unmounts, then remounts every
+ * component — and a `useRef` is re-created on that remount, so a
+ * ref-based "already ran" flag does **not** hold. That made the effect
+ * fire twice with the same `?code=`: the first POST consumed the
+ * one-time code (200), the second was rejected (401), and the failure
+ * handler clobbered the success state so the redirect never happened.
+ *
+ * Kept at module scope so it survives the remount. A real reload resets
+ * the module, which is correct — a fresh page load should attempt the
+ * exchange again. Codes are single-use, so attempting twice can never
+ * succeed regardless.
+ */
+let exchangeStartedForCode: string | null = null;
 
 function isSafeReturnPath(value: string | null): value is string {
   if (!value) return false;
@@ -71,12 +88,8 @@ function AuthCallbackInner() {
   const [detail, setDetail] = React.useState<string | null>(
     error ? errorMessage || translateOauthError(error, tCallback) : null,
   );
-  const ranRef = React.useRef(false);
 
   React.useEffect(() => {
-    if (ranRef.current) return;
-    ranRef.current = true;
-
     if (error) {
       setStatus('error');
       return;
@@ -86,12 +99,18 @@ function AuthCallbackInner() {
       setDetail(tCallback('missingCode'));
       return;
     }
+    // The one-time code can only be redeemed once. If this effect is
+    // re-run (StrictMode remount, or navigating back to this URL), skip
+    // the second attempt rather than burning it into a 401.
+    if (exchangeStartedForCode === code) return;
+    exchangeStartedForCode = code;
 
-    let cancelled = false;
+    // Note: no `cancelled` flag here. The guard above means exactly one
+    // exchange runs, so its cleanup (which StrictMode deliberately
+    // triggers) must not suppress the success state or the redirect.
     (async () => {
       try {
         await exchange.mutateAsync({ code });
-        if (cancelled) return;
         setStatus('success');
         toast.success(t('loginSuccess'));
 
@@ -100,7 +119,6 @@ function AuthCallbackInner() {
         // like a flash and gives the toast a chance to start animating.
         window.setTimeout(() => router.replace(safe), 350);
       } catch (err) {
-        if (cancelled) return;
         const msg =
           err instanceof ApiClientError ? err.message : tCallback('exchangeFailed');
         setStatus('error');
@@ -108,10 +126,6 @@ function AuthCallbackInner() {
         toast.error(msg);
       }
     })();
-
-    return () => {
-      cancelled = true;
-    };
     // We intentionally only run on first mount. The state above already
     // reflects the URL-derived inputs.
     // eslint-disable-next-line react-hooks/exhaustive-deps

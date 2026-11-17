@@ -8,7 +8,12 @@ A modern, full-featured Islamic tracking application to track Salah, Quran, Dhik
 
 ## Tech Stack
 
-### Client (`client/`)
+This repo is a **pnpm + Turborepo monorepo**: three apps under `apps/`
+and five shared packages under `packages/`.
+
+### Apps
+
+#### Client (`apps/client`)
 - **Next.js 15** (App Router) + **React 19** + **TypeScript**
 - **Tailwind CSS v4** + **shadcn/ui** (New York style)
 - **next-intl** for i18n (English now; Bangla & Arabic ready, RTL-aware)
@@ -16,18 +21,32 @@ A modern, full-featured Islamic tracking application to track Salah, Quran, Dhik
 - **Recharts** for charts/heatmaps
 - **next-themes** (light/dark mode)
 
-### Server (`server/`)
+#### API (`apps/api`)
 - **Node.js** (≥ 20) + **Express 5** + **TypeScript**
 - **MongoDB Atlas** + **Mongoose 8**
 - **Zod** for validation, **JWT** for auth, **bcryptjs** for password hashing
 - Hardening: `helmet`, `cors`, `express-rate-limit`, structured error handling
 
-### Admin (`admin/`)
-- **Next.js 15** + **React 19** + **TypeScript** (mirrors `client/` stack)
-- Tailwind CSS v4 + shadcn/ui — same design tokens as `client/`
+#### Admin (`apps/admin`)
+- **Next.js 15** + **React 19** + **TypeScript** (mirrors the client stack)
+- Tailwind CSS v4 + shadcn/ui — same design tokens as the client
 - TanStack Query + Zustand
 - Internal-only console at `:3001`. English-only (i18n is for end-users)
 - Consumes the same REST API. See [`design.md` §10](./design.md) for what works today vs which `/admin/*` server endpoints still need to ship.
+
+### Packages
+
+| Package | Purpose |
+| --- | --- |
+| `@ibadah/core` | Pure business logic shared by all three apps — Salah scoring constants + calculator, AI wire types, chart parser, canonical system prompts. No I/O, no framework code. |
+| `@ibadah/shared` | Environment-agnostic helpers — `cn()`, day-key/timezone utilities, formatting. |
+| `@ibadah/ui` | Presentational React components shared by client + admin — byte-identical primitives, plus the parameterized AI widget suite. |
+| `@ibadah/typescript-config` | Shared `tsconfig` presets (`base`, `nextjs`, `node`, `react-library`). |
+| `@ibadah/eslint-config` | Shared ESLint flat-config presets (`base`, `next`, `node`). |
+
+Packages are **built with `tsc`** (they emit `dist/` + `.d.ts`); apps consume
+the built output, and Turbo sequences builds so a package always builds
+before its consumers.
 
 ### Architecture
 - Clean **client–admin–server** separation; backend is REST.
@@ -41,26 +60,35 @@ A modern, full-featured Islamic tracking application to track Salah, Quran, Dhik
 
 ```
 ibadah/
-├── client/                      # Next.js frontend (end-user app, :3000)
-│   ├── messages/                # i18n message catalogs (en, bn, ar)
-│   └── src/
-│       ├── app/[locale]/        # Locale-prefixed App Router
-│       ├── components/          # ui, landing, layout, shared
-│       ├── lib/                 # api client, auth helpers, utils
-│       ├── hooks/, store/, types/
-│       └── i18n/                # next-intl config
-├── admin/                       # Next.js admin panel (internal, :3001)
-│   └── src/
-│       ├── app/                 # (auth)/login + (panel) shell with all admin pages
-│       ├── components/          # admin/, auth/, ui/, shared/, layout/
-│       ├── hooks/, lib/, store/
-└── server/                      # Express backend (:5000)
-    └── src/
-        ├── config/              # env validation, db connection
-        ├── middleware/          # auth, error, validate, notFound
-        ├── modules/             # auth, user, salah, quran, dhikr, habit, checklist, stats
-        ├── routes/              # route aggregator
-        └── utils/               # ApiError, catchAsync, sendResponse, token
+├── apps/
+│   ├── client/                  # Next.js frontend (end-user app, :3000)
+│   │   ├── messages/            # i18n message catalogs (en, bn, ar)
+│   │   └── src/
+│   │       ├── app/[locale]/    # Locale-prefixed App Router
+│   │       ├── components/      # ui, ai, landing, layout, shared
+│   │       ├── lib/             # api client, auth helpers
+│   │       ├── hooks/, store/, types/
+│   │       └── i18n/            # next-intl config
+│   ├── admin/                   # Next.js admin panel (internal, :3001)
+│   │   └── src/
+│   │       ├── app/             # (auth)/login + (panel) shell with all admin pages
+│   │       ├── components/      # admin/, auth/, ui/, layout/
+│   │       └── hooks/, lib/, store/
+│   └── api/                     # Express 5 API (:5000)
+│       └── src/
+│           ├── config/          # env validation, db connection
+│           ├── middleware/      # auth, error, validate, notFound
+│           ├── modules/         # auth, user, salah, quran, dhikr, habit, checklist, stats, ai
+│           ├── routes/          # route aggregator
+│           └── utils/           # ApiError, catchAsync, sendResponse, token
+├── packages/
+│   ├── core/                    # @ibadah/core — shared business logic
+│   ├── shared/                  # @ibadah/shared — shared utilities
+│   ├── ui/                      # @ibadah/ui — shared React components
+│   ├── eslint-config/           # @ibadah/eslint-config
+│   └── typescript-config/       # @ibadah/typescript-config
+├── turbo.json
+└── pnpm-workspace.yaml
 ```
 
 ---
@@ -69,8 +97,8 @@ ibadah/
 
 ### Prerequisites
 - Node.js **≥ 20** (LTS recommended)
+- **pnpm 12** (`corepack enable` — the version is pinned in `package.json`)
 - A **MongoDB Atlas** cluster (or local MongoDB)
-- Package manager: `npm`, `pnpm`, or `yarn`
 
 ### 1. Clone & install
 
@@ -78,42 +106,54 @@ ibadah/
 git clone https://github.com/noyonalways/ibadah.git
 cd ibadah
 
-# Install both client and server
-cd server && npm install
-cd ../client && npm install
+# One install for the whole workspace (all apps + packages)
+pnpm install
 ```
 
 ### 2. Configure environment
 
 ```bash
 # Server
-cp server/.env.example server/.env
+cp apps/api/.env.example apps/api/.env
 # Fill in MONGODB_URI, JWT_SECRET, JWT_REFRESH_SECRET, CLIENT_URL
 
 # Client
-cp client/.env.example client/.env
+cp apps/client/.env.example apps/client/.env
 # Fill in NEXT_PUBLIC_API_URL (e.g. http://localhost:5000/api/v1)
 
 # Admin (optional)
-cp admin/.env.example admin/.env
+cp apps/admin/.env.example apps/admin/.env
 # Same NEXT_PUBLIC_API_URL as the client.
 ```
 
 ### 3. Run in development
 
 ```bash
-# Terminal 1 — server (http://localhost:5000)
-cd server
-npm run dev
+# Everything at once (server :5000, client :3000, admin :3001)
+pnpm dev
 
-# Terminal 2 — client (http://localhost:3000)
-cd client
-npm run dev
-
-# Terminal 3 — admin (http://localhost:3001) — optional
-cd admin
-npm run dev
+# …or run a single app
+pnpm --filter ibadah-api dev
+pnpm --filter ibadah-client dev
+pnpm --filter ibadah-admin dev
 ```
+
+`pnpm dev` first builds the shared packages, then starts all three apps
+together. If you're actively editing a package, run its watch build
+alongside it:
+
+```bash
+pnpm --filter @ibadah/core dev    # tsc --watch
+```
+
+### Useful root scripts
+
+| Command | What it does |
+| --- | --- |
+| `pnpm build` | Build every app + package (Turbo-ordered) |
+| `pnpm typecheck` | Typecheck all workspaces |
+| `pnpm lint` | Lint all workspaces |
+| `pnpm clean` | Remove build output and `node_modules` |
 
 ---
 
@@ -146,7 +186,7 @@ So Fajr's sunnah-before pays out `2 × 2 = +4` while Dhuhr's pays out
 `4 × 2 = +8` — proportional to the work performed. The UI hides
 toggles that don't apply (e.g. "Sunnah after" on Fajr, or "Sunnah
 before" on Maghrib). Configurable via
-`server/src/modules/salah/salah.constants.ts` (point values + rakah
+`packages/core/src/salah/constants.ts` (point values + rakah
 counts) and the admin's Scoring page (point values only — rakah counts
 are fixed by tradition).
 
@@ -181,7 +221,7 @@ Privileged actions emit append-only **audit events** captured by
 
 - Default locale: **`en`**
 - Planned locales: **`bn`** (Bangla), **`ar`** (Arabic, RTL)
-- Locale routing handled via `next-intl` middleware. Add new strings to `client/messages/<locale>.json`.
+- Locale routing handled via `next-intl` middleware. Add new strings to `apps/client/messages/<locale>.json`.
 
 ---
 

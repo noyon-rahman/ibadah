@@ -12,7 +12,7 @@
  * `withCredentials` is left on so the same instance keeps working if the
  * server is ever switched to cookie mode for the admin too.
  */
-import axios, { AxiosError, type AxiosInstance } from 'axios';
+import axios, { type AxiosError, type AxiosInstance } from 'axios';
 
 import { authStorage } from './auth/auth-storage';
 

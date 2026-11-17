@@ -12,7 +12,7 @@ import { salahApi, type PrayerName, type SalahDay } from '@/lib/salah/salah-api'
 import { userApi } from '@/lib/user/user-api';
 import { maxDailyPoints } from '@/lib/salah-scoring';
 import { SALAH_DEFAULT_SCORING } from '@/lib/salah-defaults';
-import { cn, toDayKey } from '@/lib/utils';
+import { cn, toDayKey } from '@ibadah/shared';
 
 type TabKey = 'salah' | 'dhikr' | 'quran';
 type ChipState = 'done' | 'missed' | 'pending';
@@ -170,7 +170,7 @@ function InteractiveSalahView({ initialChips, initialStreak }: { initialChips: P
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center rounded-xl border border-border/40 bg-background/40 p-5">
         <div className="space-y-1 text-center md:text-left">
           <p className="text-[11px] uppercase font-semibold tracking-wider text-muted-foreground">{t('preview_today')}</p>
-          <h3 className="text-lg font-bold tracking-tight">Friday, Rabi' al-Awwal</h3>
+          <h3 className="text-lg font-bold tracking-tight">Friday, Rabi&apos; al-Awwal</h3>
           <p className="text-xs text-muted-foreground">Click cards to toggle prayer state</p>
         </div>
 

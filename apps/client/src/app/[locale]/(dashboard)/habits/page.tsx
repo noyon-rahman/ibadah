@@ -9,10 +9,15 @@ import { PageHeader } from '@/components/dashboard/page-header';
 import { DatePickerBar } from '@/components/dashboard/date-picker-bar';
 import { GeometricPattern } from '@/components/shared/geometric-pattern';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import {
+  Input,
+  Label,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@ibadah/ui';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   useCreateHabit,
   useDeleteHabit,
@@ -21,7 +26,7 @@ import {
   useUpdateHabit,
   useUpsertHabitDay,
 } from '@/hooks/use-habit';
-import { toDayKey, cn } from '@/lib/utils';
+import { toDayKey, cn } from '@ibadah/shared';
 import type { Habit } from '@/lib/habit/habit-api';
 import { ApiClientError } from '@/lib/api';
 

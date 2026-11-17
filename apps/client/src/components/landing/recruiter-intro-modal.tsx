@@ -32,7 +32,7 @@ import { Badge } from '@/components/ui/badge';
 import { BrandMark } from '@/components/shared/brand-mark';
 import { Link, useRouter } from '@/i18n/routing';
 import { useLogin } from '@/hooks/use-auth';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import type { PublicRecruiterIntro } from '@/lib/site-config-api';
 
 interface RecruiterIntroModalProps {
@@ -243,7 +243,7 @@ export function RecruiterIntroModal({
                 },
                 {
                   icon: <Terminal className="size-4 text-emerald-500" />,
-                  title: 'Backend API (server/)',
+                  title: 'Backend API (apps/api/)',
                   bullets: [
                     <><strong>Node.js ≥ 20</strong> + <strong>Express 5</strong> (TypeScript)</>,
                     <><strong>MongoDB Atlas</strong> + <strong>Mongoose 8</strong></>,

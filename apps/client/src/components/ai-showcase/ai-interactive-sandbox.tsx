@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Bot, Sparkles, BookOpen, CheckCircle, RefreshCw, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/shared/reveal';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 interface SamplePrompt {
   id: string;

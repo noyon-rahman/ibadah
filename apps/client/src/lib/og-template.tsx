@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unknown-property */
+ 
 import type { ReactElement } from 'react';
 
 /**

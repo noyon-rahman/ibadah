@@ -1,0 +1,35 @@
+{
+  "name": "@ibadah/shared",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Environment-agnostic shared utilities for the Ibadah monorepo.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@ibadah/eslint-config": "workspace:*",
+    "@ibadah/typescript-config": "workspace:*",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.3"
+  }
+}

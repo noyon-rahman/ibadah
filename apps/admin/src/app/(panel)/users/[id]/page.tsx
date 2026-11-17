@@ -24,7 +24,7 @@ import { Button } from '@/components/ui/button';
 import { useCurrentAdmin } from '@/hooks/use-auth';
 import { analyticsApi, usersApi, type UpdateUserDto } from '@/lib/admin/admin-api';
 import { ApiClientError } from '@/lib/api';
-import { formatRelative } from '@/lib/utils';
+import { formatRelative } from '@ibadah/shared';
 
 import { ChartCard, ChartBadge } from '@/components/admin/charts/chart-card';
 import { TimeSeriesChart } from '@/components/admin/charts/time-series-chart';

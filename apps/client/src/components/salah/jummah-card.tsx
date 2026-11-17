@@ -9,7 +9,7 @@ import {
   Sparkles,
   type LucideIcon,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import type { JummahEntry, PrayerStatus } from '@/lib/salah/salah-api';
 import type { SalahScoring } from '@/lib/user/user-api';
 import { SunnahNaflToggles } from '@/components/salah/sunnah-nafl-toggles';

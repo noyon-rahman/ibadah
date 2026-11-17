@@ -17,7 +17,7 @@ import { TrendingDown, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { DayPoints } from '@/lib/stats/stats-api';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 interface Props {
   /**

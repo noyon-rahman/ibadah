@@ -25,24 +25,24 @@ import { PageHeader } from '@/components/admin/page-header';
 import { StatCard } from '@/components/admin/stat-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Label } from '@/components/ui/label';
-import { Avatar } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ibadah/ui';
+import { Avatar } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   onboardingApi,
   type OnboardingFocus,
   type OnboardingPersona,
   type OnboardingSubmission,
 } from '@/lib/admin/admin-api';
-import { formatRelative, cn, toDayKey } from '@/lib/utils';
+import { formatRelative, cn, toDayKey } from '@ibadah/shared';
 
 const PERSONA_META: Record<
   OnboardingPersona,

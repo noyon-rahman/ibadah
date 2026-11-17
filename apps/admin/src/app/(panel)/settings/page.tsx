@@ -20,8 +20,16 @@ import { Camera, Loader2, LocateFixed, RotateCcw, Save, Trash2 } from 'lucide-re
 import { PageHeader } from '@/components/admin/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import {
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@ibadah/ui';
 import { Avatar } from '@/components/ui/avatar';
 import { RecruiterIntroCard } from '@/components/admin/recruiter-intro-card';
 import { profileApi, type Profile } from '@/lib/admin/admin-api';
@@ -32,15 +40,7 @@ import {
   compressImageFile,
   isUsableImageUrl,
 } from '@/lib/avatar-utils';
-import { detectTimezone, groupedTimezones } from '@/lib/timezones';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { detectTimezone, groupedTimezones } from '@ibadah/shared';
 
 type Locale = 'en' | 'bn' | 'ar';
 

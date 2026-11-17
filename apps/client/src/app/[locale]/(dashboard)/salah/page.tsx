@@ -15,7 +15,7 @@ import {
   useUpdatePrayer,
 } from '@/hooks/use-salah';
 import { useProfile } from '@/hooks/use-user';
-import { toDayKey, cn } from '@/lib/utils';
+import { toDayKey, cn } from '@ibadah/shared';
 import { emptyJummahEntry, type PrayerName } from '@/lib/salah/salah-api';
 import { maxDailyPoints } from '@/lib/salah-scoring';
 import { SALAH_DEFAULT_SCORING } from '@/lib/salah-defaults';

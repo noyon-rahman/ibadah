@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * Compact KPI card used across the admin dashboard and detail pages. The

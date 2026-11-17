@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Sun, Sunrise, Sunset, MoonStar, type LucideIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import type {
   PrayerEntry,
   PrayerName,

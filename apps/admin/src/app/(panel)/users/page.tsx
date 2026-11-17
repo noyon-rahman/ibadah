@@ -11,16 +11,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import {
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ibadah/ui';
 import { activeUsersApi } from '@/lib/admin/admin-api';
-import { formatRelative } from '@/lib/utils';
+import { formatRelative } from '@ibadah/shared';
 
 const WINDOW_KEYS = ['1', '7', '30', '90'] as const;
 

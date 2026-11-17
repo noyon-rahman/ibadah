@@ -3,8 +3,10 @@
 import { useCallback } from 'react';
 import { usePathname } from '@/i18n/routing';
 import { useQueryClient } from '@tanstack/react-query';
+import { AIWidget } from '@ibadah/ui';
 
-import { AIWidget } from './ai-widget';
+import { Button } from '@/components/ui/button';
+import { useAiChat } from '@/hooks/use-ai-chat';
 
 /**
  * Dashboard-flavored wrapper around `<AIWidget>`. Responsibilities:
@@ -66,6 +68,8 @@ export function DashboardAIWidget() {
         'Chart my points by day',
         'How does Awwal Waqt scoring work?',
       ]}
+      useChat={useAiChat}
+      ButtonComponent={Button}
     />
   );
 }

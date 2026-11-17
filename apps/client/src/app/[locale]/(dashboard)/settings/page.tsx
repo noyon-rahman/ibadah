@@ -22,15 +22,15 @@ import { toast } from 'sonner';
 import { PageHeader } from '@/components/dashboard/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ibadah/ui';
 import { useProfile, useResetScoring, useUpdateProfile } from '@/hooks/use-user';
 import { ApiClientError } from '@/lib/api';
 import { GeometricPattern } from '@/components/shared/geometric-pattern';

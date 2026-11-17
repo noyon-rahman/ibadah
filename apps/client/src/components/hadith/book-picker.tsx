@@ -7,8 +7,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
+  Label,
+} from '@ibadah/ui';
 import { KUTUB_AS_SITTAH, type HadithBookSlug } from '@/lib/hadith/hadith-api';
 
 interface Props {

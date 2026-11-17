@@ -5,9 +5,19 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Sparkles } from 'lucide-react';
 
-import { AIPanel } from '@/components/ai/ai-panel';
-import { ChatHistorySidebar } from '@/components/ai/chat-history-sidebar';
+import { AIPanel, ChatHistorySidebar } from '@ibadah/ui';
+import { Button } from '@/components/ui/button';
+import { useAiChat } from '@/hooks/use-ai-chat';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
+
+/**
+ * Copy for the empty transcript. Declared module-level so the panel
+ * receives a stable object reference across renders.
+ */
+const PANEL_EMPTY_STATE = {
+  title: 'Ask me anything about Ibadah',
+  description: 'Salah scoring, habit tracking, or paste your stats and I\u2019ll visualize them.',
+};
 
 /**
  * Dedicated assistant page — same chat surface as the floating
@@ -125,6 +135,7 @@ export default function AssistantPage() {
           onNewSession={handleNewSession}
           onDeleteSession={handleDeleteSession}
           onRenameSession={renameSession}
+          ButtonComponent={Button}
         />
         <div className="flex min-w-0 flex-1 flex-col">
           <AIPanel
@@ -137,6 +148,9 @@ export default function AssistantPage() {
             density="comfortable"
             autoFocus
             greeting={t('Assistant.greeting')}
+            emptyState={PANEL_EMPTY_STATE}
+            useChat={useAiChat}
+            ButtonComponent={Button}
             suggestions={[
               t('Assistant.suggest_summary'),
               t('Assistant.suggest_chart'),

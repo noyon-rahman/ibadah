@@ -28,21 +28,21 @@ import {
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ibadah/ui';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { profileApi } from '@/lib/admin/admin-api';
 import { ApiClientError } from '@/lib/api';
 import { useCurrentAdmin, useLogout } from '@/hooks/use-auth';
@@ -51,7 +51,7 @@ import {
   AVATAR_MAX_BYTES,
   compressImageFile,
 } from '@/lib/avatar-utils';
-import { groupedTimezones } from '@/lib/timezones';
+import { groupedTimezones } from '@ibadah/shared';
 import Link from 'next/link';
 
 const LOCALES: { value: 'en' | 'bn' | 'ar'; labelKey: 'localeEn' | 'localeBn' | 'localeAr' }[] = [

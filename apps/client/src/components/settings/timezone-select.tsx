@@ -11,9 +11,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ibadah/ui';
 import { Button } from '@/components/ui/button';
-import { detectTimezone, groupedTimezones } from '@/lib/timezones';
+import { detectTimezone, groupedTimezones } from '@ibadah/shared';
 
 interface Props {
   id?: string;

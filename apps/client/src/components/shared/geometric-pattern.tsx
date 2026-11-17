@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * An 8-pointed Islamic star (Khatim) tile, rendered as a subtle, looping

@@ -17,20 +17,20 @@ import {
 import { PageHeader } from '@/components/admin/page-header';
 import { StatCard } from '@/components/admin/stat-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Avatar } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@ibadah/ui';
+import { Avatar } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { auditApi, type AuditEvent } from '@/lib/admin/admin-api';
-import { formatRelative, cn } from '@/lib/utils';
+import { formatRelative, cn } from '@ibadah/shared';
 
 const ACTION_TONE: Record<string, string> = {
   'user.update': 'bg-amber-500/15 text-amber-700 dark:text-amber-300',

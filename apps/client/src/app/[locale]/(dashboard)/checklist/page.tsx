@@ -9,9 +9,9 @@ import { PageHeader } from '@/components/dashboard/page-header';
 import { DatePickerBar } from '@/components/dashboard/date-picker-bar';
 import { GeometricPattern } from '@/components/shared/geometric-pattern';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Input } from '@ibadah/ui';
 import { useChecklistDay, useUpsertChecklistDay } from '@/hooks/use-checklist';
-import { toDayKey, cn } from '@/lib/utils';
+import { toDayKey, cn } from '@ibadah/shared';
 import type { ChecklistItem } from '@/lib/checklist/checklist-api';
 
 interface DraftItem extends ChecklistItem {

@@ -15,11 +15,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
+  Label,
+} from '@ibadah/ui';
 import { RangePicker, type RangeValue } from '@/components/admin/range-picker';
 import { leaderboardApi } from '@/lib/admin/admin-api';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 export default function LeaderboardPage() {
   const t = useTranslations('Leaderboard');

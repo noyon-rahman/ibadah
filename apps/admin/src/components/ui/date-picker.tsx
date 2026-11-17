@@ -4,7 +4,7 @@ import * as React from 'react';
 import { CalendarDays } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * Public date picker. Always renders an inline button as the trigger

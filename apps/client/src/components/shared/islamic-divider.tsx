@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 /**
  * A delicate ornamental divider with a centered 8-pointed star, framed by

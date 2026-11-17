@@ -12,7 +12,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 export interface SeriesDef {
   key: string;

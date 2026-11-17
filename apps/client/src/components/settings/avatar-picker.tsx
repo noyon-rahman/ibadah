@@ -7,15 +7,14 @@ import { toast } from 'sonner';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Input, Label } from '@ibadah/ui';
 import {
   AVATAR_MAX_BYTES,
   compressImageFile,
   isUsableImageUrl,
 } from '@/lib/avatar-utils';
 import { AVATAR_PRESETS } from '@/lib/avatar-presets';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 
 interface Props {
   /** Display name — used for fallback initials and image alt text. */

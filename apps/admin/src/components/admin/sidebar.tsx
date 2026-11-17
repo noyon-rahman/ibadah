@@ -22,7 +22,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { BrandMark } from '@/components/shared/brand-mark';
-import { cn } from '@/lib/utils';
+import { cn } from '@ibadah/shared';
 import { useUiStore } from '@/store/ui-store';
 import {
   Tooltip,
