@@ -17,6 +17,7 @@ router.use(requireAuth, requireAdmin);
 // Provider configuration
 router.get('/provider', aiConfigController.getProviderConfig);
 router.get('/provider/:name/key', aiConfigController.revealProviderKey);
+router.get('/provider/:name/models', aiConfigController.listProviderModels);
 router.patch('/provider', aiConfigController.updateProviderConfig);
 
 // Provider testing and discovery
@@ -32,5 +33,6 @@ router.get('/usage', aiConfigController.getUsageStats);
 
 // General configuration
 router.get('/', aiConfigController.getConfig);
+router.patch('/', aiConfigController.updateConfig);
 
 export { router as aiConfigRouter };

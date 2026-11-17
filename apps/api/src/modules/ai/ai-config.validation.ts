@@ -6,23 +6,34 @@
 
 import { z } from 'zod';
 
+const providerNameEnum = z.enum([
+  'openrouter',
+  'openai',
+  'anthropic',
+  'gemini',
+  'custom',
+] as const);
+
 export const updateProviderConfigSchema = z.object({
-  name: z.enum(['openrouter', 'openai', 'anthropic', 'gemini'] as const).optional(),
+  name: providerNameEnum.optional(),
   enabled: z.boolean().optional(),
   apiKey: z.string().min(10).max(500).optional(),
+  baseUrl: z.string().url().max(300).optional().nullable(),
   defaultModel: z.string().min(1).max(200).optional(),
+  availableModels: z.array(z.string().min(1).max(200)).max(500).optional(),
   maxTokens: z.number().int().min(100).max(8000).optional(),
   rateLimitTier: z.enum(['free', 'standard', 'premium']).optional(),
 });
 
 export const testProviderSchema = z.object({
-  provider: z.enum(['openrouter', 'openai', 'anthropic', 'gemini'] as const),
+  provider: providerNameEnum,
   apiKey: z.string().min(10).max(500),
   model: z.string().min(1).max(200).optional(),
+  baseUrl: z.string().url().max(300).optional(),
 });
 
 export const setRateLimitSchema = z.object({
-  provider: z.enum(['openrouter', 'openai', 'anthropic', 'gemini'] as const),
+  provider: providerNameEnum,
   requestsPerMinute: z.number().int().min(1).max(1000).optional(),
   requestsPerHour: z.number().int().min(1).max(10000).optional(),
   requestsPerDay: z.number().int().min(1).max(100000).optional(),
@@ -34,13 +45,13 @@ export const setRateLimitSchema = z.object({
 
 export const createApiKeySchema = z.object({
   name: z.string().min(1).max(100),
-  provider: z.enum(['openrouter', 'openai', 'anthropic', 'gemini'] as const),
+  provider: providerNameEnum,
   key: z.string().min(10).max(500),
   environment: z.enum(['development', 'staging', 'production']).default('development'),
 });
 
 export const updateAIConfigSchema = z.object({
-  activeProvider: z.enum(['openrouter', 'openai', 'anthropic', 'gemini'] as const).optional(),
+  activeProvider: providerNameEnum.optional(),
   defaultModel: z.string().min(1).max(200).optional(),
   maxTokens: z.number().int().min(100).max(8000).optional(),
   temperature: z.number().min(0).max(2).optional(),

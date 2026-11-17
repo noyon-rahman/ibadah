@@ -122,7 +122,12 @@ export interface ChatProvider {
   streamChat(input: ProviderChatInput): AsyncIterable<string>;
 }
 
-export type ProviderName = 'openrouter' | 'openai' | 'anthropic' | 'gemini';
+/**
+ * `custom` is a generic OpenAI-compatible endpoint (RiverAI, vLLM, LiteLLM,
+ * Ollama, …) whose `baseUrl` is configured per deployment. Note that the
+ * server-side `AiConfig` must carry a `baseUrl` for it to work.
+ */
+export type ProviderName = 'openrouter' | 'openai' | 'anthropic' | 'gemini' | 'custom';
 
 export type SystemSurface = 'landing' | 'dashboard' | 'admin';
 

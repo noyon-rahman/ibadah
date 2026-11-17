@@ -15,6 +15,7 @@ import type {
   AiProvider,
   ChatMessage,
   CompletionChunk,
+  DiscoveredModel,
   StreamChatOptions,
   StreamCompletionOptions,
   ToolSpec,
@@ -78,6 +79,19 @@ export abstract class OpenAiCompatibleProvider implements AiProvider {
   /** Extra per-request headers (OpenRouter attribution, etc.). */
   protected requestHeaders(): Record<string, string> {
     return {};
+  }
+
+  /**
+   * Read the endpoint's `/models` catalog. Every OpenAI-compatible service
+   * exposes this, so OpenAI, OpenRouter and custom endpoints (RiverAI, vLLM,
+   * Ollama…) all get model discovery for free.
+   */
+  async listModels(): Promise<DiscoveredModel[]> {
+    const page = await this.client.models.list({ headers: this.requestHeaders() });
+    return page.data
+      .map((m) => ({ id: m.id }))
+      .filter((m) => Boolean(m.id))
+      .sort((a, b) => a.id.localeCompare(b.id));
   }
 
   async *streamCompletion(options: StreamCompletionOptions): AsyncIterable<CompletionChunk> {

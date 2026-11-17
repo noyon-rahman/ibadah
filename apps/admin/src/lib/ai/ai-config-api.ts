@@ -72,6 +72,18 @@ export interface TestResult {
 
 // API Functions — all routed through the shared axios instance via `api`.
 
+export interface DiscoveredModel {
+  id: string;
+  displayName?: string;
+}
+
+export interface ModelListResult {
+  models: DiscoveredModel[];
+  /** `provider` = live from the endpoint, `configured` = saved fallback list. */
+  source: 'provider' | 'configured';
+  defaultModel: string | null;
+}
+
 /**
  * Get all configured AI providers with full settings (model, tokens, tier,
  * masked key, etc.). Uses the detailed `/provider` endpoint — the plural
@@ -90,10 +102,42 @@ export async function getProviderKey(provider: string): Promise<string> {
 }
 
 /**
- * Get current AI settings
+ * Discover the models a provider serves, for the model picker.
+ *
+ * Pass the current (possibly unsaved) key / base URL so the list reflects the
+ * admin's draft edits. Both are optional: the server falls back to the stored
+ * credentials when they're omitted.
+ */
+export async function getProviderModels(
+  provider: string,
+  options: { apiKey?: string; baseUrl?: string } = {}
+): Promise<ModelListResult> {
+  const params = new URLSearchParams();
+  if (options.apiKey && options.apiKey !== 'using-stored-key') {
+    params.set('apiKey', options.apiKey);
+  }
+  if (options.baseUrl) params.set('baseUrl', options.baseUrl);
+  const qs = params.toString();
+  return api<ModelListResult>(
+    `/ai/config/provider/${provider}/models${qs ? `?${qs}` : ''}`
+  );
+}
+
+/**
+ * Get current AI settings.
+ *
+ * The API has historically returned the active provider as `provider` while
+ * PATCH returns `activeProvider`. Normalise both into `activeProvider` so the
+ * form always binds to one field and can never silently fall back to a
+ * hardcoded default on reload.
  */
 export async function getAISettings(): Promise<AISettings> {
-  return api<AISettings>('/ai/config');
+  const data = await api<AISettings & { provider?: string; model?: string }>('/ai/config');
+  return {
+    ...data,
+    activeProvider: data.activeProvider ?? data.provider ?? '',
+    defaultModel: data.defaultModel ?? data.model ?? '',
+  };
 }
 
 /**
@@ -117,12 +161,13 @@ export async function updateProvider(
 export async function testProvider(
   provider: string,
   apiKey: string,
-  model?: string
+  model?: string,
+  baseUrl?: string
 ): Promise<TestResult> {
   try {
     const raw = await api.raw<TestResult['data']>('/ai/config/test', {
       method: 'POST',
-      body: { provider, apiKey, model },
+      body: { provider, apiKey, model, baseUrl },
     });
     return { success: true, message: raw.message, data: raw.data };
   } catch (err) {

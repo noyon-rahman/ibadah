@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { 
   Bot, 
@@ -18,7 +18,8 @@ import {
   Eye,
   EyeOff,
   Copy,
-  Check
+  Check,
+  ListFilter
 } from 'lucide-react';
 
 import { PageHeader } from '@/components/admin/page-header';
@@ -41,16 +42,19 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@ibadah/shared';
 import { useToast } from '@/hooks/use-toast';
 import {
   getProviders,
   getProviderKey,
+  getProviderModels,
   getAISettings,
   getUsageStats,
   updateProvider,
   updateAISettings,
   testProvider,
+  type DiscoveredModel,
 } from '@/lib/ai/ai-config-api';
 
 // Tab triggers styled to mirror the admin sidebar nav buttons: rounded-xl
@@ -118,8 +122,11 @@ export default function AISettingsPage() {
   // Data states
   const [providers, setProviders] = useState<ProviderConfig[]>([]);
   const [settings, setSettings] = useState<AISettings>({
-    activeProvider: 'openrouter',
-    defaultModel: 'openai/gpt-4o-mini',
+    // Empty until the server reports the real active provider. Hardcoding a
+    // default here made the UI claim OpenRouter whenever the response shape
+    // changed, hiding the bug instead of surfacing it.
+    activeProvider: '',
+    defaultModel: '',
     maxTokens: 1024,
     temperature: 0.4,
     features: {
@@ -133,19 +140,94 @@ export default function AISettingsPage() {
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
 
   // Form states
-  const [selectedProvider, setSelectedProvider] = useState<string>('openrouter');
+  const [selectedProvider, setSelectedProvider] = useState<string>('');
+  /** True once a provider has been chosen, so refetches keep the admin's choice. */
+  const selectionInitialised = useRef(false);
   const [apiKeyInput, setApiKeyInput] = useState<string>('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [apiKeyCopied, setApiKeyCopied] = useState(false);
   const [isRevealingKey, setIsRevealingKey] = useState(false);
+  /** Name of the provider currently being activated, so only that row spins. */
+  const [activatingProvider, setActivatingProvider] = useState<string | null>(null);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string; latency?: number } | null>(null);
 
-  // Reset the key field when switching providers so one provider's key never
-  // leaks into another's form.
+  // Model discovery for the picker. Free-text entry always remains possible.
+  const [providerModels, setProviderModels] = useState<DiscoveredModel[]>([]);
+  const [modelsSource, setModelsSource] = useState<'provider' | 'configured' | null>(null);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [modelFilter, setModelFilter] = useState('');
+  const [modelPickerOpen, setModelPickerOpen] = useState(false);
+  const modelsRequestSeq = useRef(0);
+
+  const currentProvider = providers.find(p => p.name === selectedProvider);
+  // Depend on the draft endpoint/key so the list refreshes as they're edited.
+  const draftBaseUrl = selectedProvider === 'custom' ? (currentProvider?.baseUrl ?? '') : '';
+
+  const filteredModels = useMemo(() => {
+    const q = modelFilter.trim().toLowerCase();
+    if (!q) return providerModels;
+    return providerModels.filter(
+      (m) =>
+        m.id.toLowerCase().includes(q) ||
+        (m.displayName ?? '').toLowerCase().includes(q),
+    );
+  }, [providerModels, modelFilter]);
+
+  const pickModel = (id: string) => {
+    setProviders(prev =>
+      prev.map(p => (p.name === selectedProvider ? { ...p, defaultModel: id } : p)),
+    );
+    setModelPickerOpen(false);
+    setModelFilter('');
+  };
+
+  const refreshModels = async () => {
+    if (!selectedProvider) return;
+    // Guards against an older (slower) request overwriting a newer result.
+    const requestId = ++modelsRequestSeq.current;
+    setModelsLoading(true);
+    setModelsError(null);
+    try {
+      const result = await getProviderModels(selectedProvider, {
+        apiKey: apiKeyInput || undefined,
+        baseUrl: draftBaseUrl || undefined,
+      });
+      if (requestId !== modelsRequestSeq.current) return;
+      setProviderModels(result.models ?? []);
+      setModelsSource(result.source);
+    } catch (error) {
+      if (requestId !== modelsRequestSeq.current) return;
+      setProviderModels([]);
+      setModelsSource(null);
+      setModelsError((error as Error).message || 'Could not load models');
+    } finally {
+      if (requestId === modelsRequestSeq.current) setModelsLoading(false);
+    }
+  };
+
+  // Reset the per-provider form state when switching providers so one
+  // provider's key, model list and errors never show under another's form.
   useEffect(() => {
     setApiKeyInput('');
     setShowApiKey(false);
+    setProviderModels([]);
+    setModelsSource(null);
+    setModelsError(null);
+    setTestResult(null);
+    setModelFilter('');
+    setModelPickerOpen(false);
   }, [selectedProvider]);
+
+  // Debounced refetch when the provider, key, or draft endpoint changes.
+  useEffect(() => {
+    if (!selectedProvider) return;
+    const timer = setTimeout(() => {
+      void refreshModels();
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProvider, apiKeyInput, draftBaseUrl]);
 
   // Returns the key to act on: whatever the admin typed, or the stored key
   // fetched on demand (the stored key is never sent on initial load).
@@ -214,9 +296,19 @@ export default function AISettingsPage() {
 
       if (settingsData) {
         setSettings(prev => ({ ...prev, ...settingsData }));
-        setSelectedProvider(settingsData.activeProvider || 'openrouter');
-      } else if (providersData && providersData.length > 0) {
-        setSelectedProvider(prev => providersData.some(p => p.name === prev) ? prev : providersData[0].name);
+      }
+
+      // Only pick a default on the *first* load. Re-fetching after a save or an
+      // activation must never steal the selection out of the form the admin is
+      // working in — that was why choosing a provider appeared to "snap back".
+      if (!selectionInitialised.current && providersData && providersData.length > 0) {
+        selectionInitialised.current = true;
+        const preferred = settingsData?.activeProvider;
+        setSelectedProvider(
+          preferred && providersData.some(p => p.name === preferred)
+            ? preferred
+            : providersData[0].name,
+        );
       }
 
       if (usageData) {
@@ -233,11 +325,44 @@ export default function AISettingsPage() {
     }
   };
 
+  /**
+   * Make a provider the one the app actually uses, and show it in the form so
+   * the admin can immediately see what is now live. Its own saved key, endpoint
+   * and model are kept; every other provider's settings stay saved and can be
+   * switched back to at any time.
+   */
+  const handleActivateProvider = async (name: string) => {
+    // Ignore repeated clicks while any activation is in flight.
+    if (name === settings.activeProvider || activatingProvider) return;
+    setActivatingProvider(name);
+    try {
+      const updated = await updateAISettings({ activeProvider: name });
+      if (updated) setSettings(prev => ({ ...prev, ...updated }));
+      // Reflect the switch immediately, before the refetch lands.
+      setSettings(prev => ({ ...prev, activeProvider: name }));
+      setSelectedProvider(name);
+      toast({
+        title: 'Provider activated',
+        description: `${providers.find(p => p.name === name)?.displayName ?? name} is now handling AI requests.`,
+      });
+      await fetchData();
+    } catch (error) {
+      toast({
+        title: 'Could not activate provider',
+        description: (error as Error).message || 'Failed to activate provider',
+        variant: 'destructive',
+      });
+    } finally {
+      setActivatingProvider(null);
+    }
+  };
+
   const handleSaveProvider = async () => {
+    const provider = providers.find(p => p.name === selectedProvider);
+    // Bail *before* flipping into the saving state, or the button stays spinning.
+    if (!provider) return;
     setIsSaving(true);
     try {
-      const provider = providers.find(p => p.name === selectedProvider);
-      if (!provider) return;
 
       const updateData: Partial<ProviderConfig> = {
         enabled: provider.enabled,
@@ -245,6 +370,20 @@ export default function AISettingsPage() {
         maxTokens: provider.maxTokens,
         rateLimitTier: provider.rateLimitTier,
       };
+
+      // Custom OpenAI-compatible endpoints carry their own API root.
+      if (selectedProvider === 'custom') {
+        updateData.baseUrl = provider.baseUrl?.trim() || undefined;
+      }
+
+      // Persist the discovered catalog so the saved list stays useful as a
+      // fallback when /models is unavailable. The current pick goes first.
+      if (providerModels.length > 0) {
+        const ids = providerModels.map(m => m.id);
+        updateData.availableModels = ids.includes(provider.defaultModel)
+          ? [provider.defaultModel, ...ids.filter(id => id !== provider.defaultModel)]
+          : [provider.defaultModel, ...ids];
+      }
 
       // Only include API key if it was changed (not masked)
       if (apiKeyInput && !apiKeyInput.includes('*')) {
@@ -258,7 +397,9 @@ export default function AISettingsPage() {
         description: 'Provider settings saved successfully',
       });
       setApiKeyInput('');
-      fetchData();
+      // Await the refresh so the form settles on server data before the admin
+      // can touch it again (an un-awaited refetch raced with model discovery).
+      await fetchData();
     } catch (error) {
       toast({
         title: 'Error',
@@ -290,6 +431,7 @@ export default function AISettingsPage() {
         selectedProvider,
         apiKey || 'using-stored-key',
         provider.defaultModel,
+        selectedProvider === 'custom' ? provider.baseUrl : undefined,
       );
       setTestResult({
         success: data.success,
@@ -325,19 +467,6 @@ export default function AISettingsPage() {
     }
   };
 
-  const getStatusBadge = (enabled: boolean) => {
-    return enabled ? (
-      <Badge variant="default" className="bg-green-500/10 text-green-600 hover:bg-green-500/20">
-        <CheckCircle2 className="mr-1 h-3 w-3" />
-        Active
-      </Badge>
-    ) : (
-      <Badge variant="secondary" className="bg-gray-500/10 text-gray-600">
-        <XCircle className="mr-1 h-3 w-3" />
-        Inactive
-      </Badge>
-    );
-  };
 
   if (isLoading) {
     return (
@@ -384,30 +513,118 @@ export default function AISettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Provider Selector */}
+              {/* Provider list — each row shows its saved state and whether it's live */}
               <div className="space-y-2">
-                <Label htmlFor="provider">Select Provider</Label>
-                <Select value={selectedProvider} onValueChange={setSelectedProvider}>
-                  <SelectTrigger id="provider">
-                    <SelectValue placeholder="Select a provider" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {providers.map((p) => (
-                      <SelectItem key={p.name} value={p.name}>
-                        <div className="flex items-center gap-2">
-                          {p.displayName}
-                          {getStatusBadge(p.enabled)}
+                <Label>AI Providers</Label>
+                <p className="text-xs text-muted-foreground">
+                  Each provider keeps its own API key, endpoint and model. Selecting one only
+                  edits it — use <span className="font-medium">Use this provider</span> to make it
+                  handle requests.
+                </p>
+                <div className="space-y-2">
+                  {providers.map((p) => {
+                    const isActive = p.name === settings.activeProvider;
+                    const isSelected = p.name === selectedProvider;
+                    const hasKey = Boolean(p.apiKeyLastFour);
+                    return (
+                      <div
+                        key={p.name}
+                        className={cn(
+                          'flex flex-col gap-3 rounded-xl border p-3 transition-colors sm:flex-row sm:items-center sm:justify-between',
+                          isActive
+                            ? 'border-primary/40 bg-primary/5'
+                            : isSelected
+                              ? 'border-border bg-muted/40'
+                              : 'border-border/60',
+                          // The row being edited is always visibly outlined, even
+                          // when it is also the active provider.
+                          isSelected && 'ring-2 ring-primary/40',
+                        )}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setSelectedProvider(p.name)}
+                          className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                        >
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="truncate font-medium">{p.displayName}</span>
+                              {isActive ? (
+                                <Badge variant="default" className="bg-green-500/10 text-green-600 hover:bg-green-500/20">
+                                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                                  Active
+                                </Badge>
+                              ) : hasKey ? (
+                                <Badge variant="secondary">Saved</Badge>
+                              ) : (
+                                <Badge variant="secondary" className="bg-gray-500/10 text-gray-600">
+                                  Not configured
+                                </Badge>
+                              )}
+                              {isSelected && (
+                                <Badge variant="outline" className="border-primary/40 text-primary">
+                                  editing
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="truncate text-xs text-muted-foreground">
+                              {p.defaultModel || 'no model'}
+                              {hasKey ? ` · ****${p.apiKeyLastFour}` : ' · no key'}
+                              {p.baseUrl ? ` · ${p.baseUrl}` : ''}
+                            </p>
+                          </div>
+                        </button>
+                        <div className="flex shrink-0 items-center gap-2">
+                          {isActive ? (
+                            <span className="text-xs font-medium text-green-600">In use</span>
+                          ) : (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant={hasKey ? 'default' : 'outline'}
+                              // Only block activation while *this* provider is
+                              // switching; other rows stay idle, not spinning.
+                              disabled={(activatingProvider !== null && activatingProvider !== p.name) || !hasKey}
+                              title={hasKey ? 'Make this the active provider' : 'Save an API key first'}
+                              onClick={() => handleActivateProvider(p.name)}
+                            >
+                              {activatingProvider === p.name ? (
+                                <RefreshCw className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                              ) : null}
+                              Use this provider
+                            </Button>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setSelectedProvider(p.name)}
+                          >
+                            Edit
+                          </Button>
                         </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               {selectedProvider && (
                 <>
                   <Separator />
-                  
+
+                  {/* Name the provider being edited so the form is never ambiguous. */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-base font-semibold">
+                      {providers.find(p => p.name === selectedProvider)?.displayName ?? selectedProvider}
+                    </h3>
+                    {selectedProvider === settings.activeProvider ? (
+                      <Badge className="bg-green-500/10 text-green-600">Active — in use</Badge>
+                    ) : (
+                      <Badge variant="secondary">Saved — not in use</Badge>
+                    )}
+                  </div>
+
                   {/* Provider Settings */}
                   <div className="grid gap-6 md:grid-cols-2">
                     {/* API Key */}
@@ -465,29 +682,154 @@ export default function AISettingsPage() {
                       </p>
                     </div>
 
-                    {/* Default Model — type a custom model id or pick a suggestion */}
+                    {/* Base URL — only meaningful for user-supplied OpenAI-compatible endpoints */}
+                    {selectedProvider === 'custom' && (
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="baseUrl">Base URL</Label>
+                        <Input
+                          id="baseUrl"
+                          type="url"
+                          placeholder="https://api.river.ai/v1"
+                          autoComplete="off"
+                          value={providers.find(p => p.name === selectedProvider)?.baseUrl || ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setProviders(prev => prev.map(p =>
+                              p.name === selectedProvider ? { ...p, baseUrl: value } : p
+                            ));
+                          }}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          OpenAI-compatible API root, including the version segment (usually ends
+                          in <code>/v1</code>). Chat requests go to <code>{'{baseUrl}'}/chat/completions</code>.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Default Model — free text, with a fetched model picker */}
                     <div className="space-y-2">
-                      <Label htmlFor="model">Default Model</Label>
-                      <Input
-                        id="model"
-                        list="model-options"
-                        placeholder="Type or select a model"
-                        autoComplete="off"
-                        value={providers.find(p => p.name === selectedProvider)?.defaultModel || ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setProviders(prev => prev.map(p =>
-                            p.name === selectedProvider ? { ...p, defaultModel: value } : p
-                          ));
-                        }}
-                      />
-                      <datalist id="model-options">
-                        {providers.find(p => p.name === selectedProvider)?.availableModels?.map((model) => (
-                          <option key={model} value={model} />
-                        ))}
-                      </datalist>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="model">Default Model</Label>
+                        <span className="text-xs text-muted-foreground">
+                          {modelsLoading
+                            ? 'Fetching models…'
+                            : modelsSource === 'provider'
+                              ? `${providerModels.length} available`
+                              : modelsSource === 'configured'
+                                ? 'Saved list'
+                                : null}
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          id="model"
+                          placeholder="Type a model id or browse"
+                          autoComplete="off"
+                          value={providers.find(p => p.name === selectedProvider)?.defaultModel || ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setProviders(prev => prev.map(p =>
+                              p.name === selectedProvider ? { ...p, defaultModel: value } : p
+                            ));
+                          }}
+                        />
+                        <Popover open={modelPickerOpen} onOpenChange={setModelPickerOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="shrink-0"
+                              disabled={modelsLoading}
+                              aria-label="Browse available models"
+                            >
+                              {modelsLoading ? (
+                                <RefreshCw className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <ListFilter className="h-4 w-4" />
+                              )}
+                              <span className="ml-2 hidden sm:inline">Browse</span>
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent align="end" className="w-[min(28rem,90vw)] p-2">
+                            <Input
+                              autoFocus
+                              placeholder="Filter models…"
+                              value={modelFilter}
+                              onChange={(e) => setModelFilter(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  const first = filteredModels[0];
+                                  if (first) {
+                                    pickModel(first.id);
+                                    e.preventDefault();
+                                  }
+                                }
+                              }}
+                              className="mb-2"
+                            />
+                            <div className="max-h-72 space-y-0.5 overflow-y-auto">
+                              {filteredModels.length === 0 ? (
+                                <p className="px-2 py-6 text-center text-sm text-muted-foreground">
+                                  {modelsLoading
+                                    ? 'Loading models…'
+                                    : modelsError
+                                      ? modelsError
+                                      : providerModels.length === 0
+                                        ? 'No models found. Type the id manually.'
+                                        : 'No matches.'}
+                                </p>
+                              ) : (
+                                filteredModels.map((model) => {
+                                  const isCurrent =
+                                    model.id === providers.find(p => p.name === selectedProvider)?.defaultModel;
+                                  return (
+                                    <button
+                                      key={model.id}
+                                      type="button"
+                                      onClick={() => pickModel(model.id)}
+                                      className={cn(
+                                        'flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors',
+                                        'hover:bg-muted/70',
+                                        isCurrent && 'bg-primary/10 text-foreground',
+                                      )}
+                                    >
+                                      <span className="min-w-0">
+                                        <span className="block truncate font-medium">{model.id}</span>
+                                        {model.displayName && (
+                                          <span className="block truncate text-xs text-muted-foreground">
+                                            {model.displayName}
+                                          </span>
+                                        )}
+                                      </span>
+                                      {isCurrent && <Check className="h-4 w-4 shrink-0 text-primary" />}
+                                    </button>
+                                  );
+                                })
+                              )}
+                            </div>
+                            <div className="mt-2 flex items-center justify-between border-t pt-2">
+                              <span className="text-xs text-muted-foreground">
+                                {modelsSource === 'configured'
+                                  ? 'Showing the saved list'
+                                  : 'Fetched from the provider'}
+                              </span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => refreshModels()}
+                                disabled={modelsLoading}
+                              >
+                                <RefreshCw className={cn('mr-1.5 h-3.5 w-3.5', modelsLoading && 'animate-spin')} />
+                                Refresh
+                              </Button>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
                       <p className="text-xs text-muted-foreground">
-                        Choose from the list or enter any custom model id.
+                        Pick from the list or type any model id. You can always enter a model
+                        that isn&apos;t listed.
                       </p>
                     </div>
 

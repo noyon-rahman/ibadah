@@ -12,6 +12,7 @@ import type {
   AiProvider,
   ChatMessage,
   CompletionChunk,
+  DiscoveredModel,
   StreamChatOptions,
   StreamCompletionOptions,
   ToolSpec,
@@ -151,6 +152,15 @@ export class AnthropicProvider implements AiProvider {
     for await (const chunk of this.streamCompletion(options)) {
       if (chunk.type === 'text') yield chunk.delta;
     }
+  }
+
+  /** Anthropic's `/v1/models` returns ids plus human-friendly display names. */
+  async listModels(): Promise<DiscoveredModel[]> {
+    const models: DiscoveredModel[] = [];
+    for await (const model of this.client.models.list({ limit: 100 })) {
+      models.push({ id: model.id, displayName: model.display_name });
+    }
+    return models;
   }
 }
 

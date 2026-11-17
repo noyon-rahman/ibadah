@@ -113,20 +113,20 @@ async function clearCollections(): Promise<void> {
   console.log('✅ All collections cleared');
 }
 
-type SeedProviderName = 'openrouter' | 'openai' | 'anthropic' | 'gemini';
+type SeedProviderName = 'openrouter' | 'openai' | 'anthropic' | 'gemini' | 'custom';
 
 interface SeedProviderMeta {
   displayName: string;
   defaultModel: string;
   availableModels: string[];
   rateLimitTier: 'free' | 'standard' | 'premium';
-  envKey: string;
+  /** OpenAI-compatible API root. Only used by the `custom` provider. */
+  baseUrl?: string;
 }
 
 /**
- * Static provider metadata. API keys and the active provider/model come from
- * the environment at seed time; `.env` then remains the runtime fallback
- * (see `getAiConfig` in `modules/ai/ai.config.ts`).
+ * Static provider metadata. API keys are never seeded from the environment —
+ * they are entered in the admin UI and stored in the database.
  */
 const AI_PROVIDER_DEFAULTS: Record<SeedProviderName, SeedProviderMeta> = {
   openrouter: {
@@ -140,79 +140,74 @@ const AI_PROVIDER_DEFAULTS: Record<SeedProviderName, SeedProviderMeta> = {
       'nvidia/nemotron-3-super-120b-a12b:free',
     ],
     rateLimitTier: 'free',
-    envKey: 'OPENROUTER_API_KEY',
   },
   openai: {
     displayName: 'OpenAI',
     defaultModel: 'gpt-4o-mini',
     availableModels: ['gpt-4o-mini', 'gpt-4o', 'gpt-3.5-turbo'],
     rateLimitTier: 'standard',
-    envKey: 'OPENAI_API_KEY',
   },
   anthropic: {
     displayName: 'Anthropic',
     defaultModel: 'claude-3-5-haiku-20241022',
     availableModels: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022'],
     rateLimitTier: 'standard',
-    envKey: 'ANTHROPIC_API_KEY',
   },
   gemini: {
     displayName: 'Google Gemini',
     defaultModel: 'gemini-1.5-flash',
     availableModels: ['gemini-1.5-flash', 'gemini-1.5-pro'],
     rateLimitTier: 'free',
-    envKey: 'GEMINI_API_KEY',
+  },
+  custom: {
+    displayName: 'RiverAI (OpenAI-compatible)',
+    defaultModel: 'zai-org/GLM-5.3-Flash',
+    availableModels: [
+      'Qwen/Qwen3.5-9B',
+      'Qwen/Qwen3.8-27B-FP8',
+      'deepseek-ai/DeepSeek-V4.1-Flash',
+      'moonshotai/Kimi-K3',
+      'moonshotai/Kimi-K3.1-Pro',
+      'zai-org/GLM-5.3-Flash',
+      'GLM-5.3',
+    ],
+    rateLimitTier: 'standard',
+    baseUrl: 'https://api.river.ai/v1',
   },
 };
 
 const AI_PROVIDER_NAMES = Object.keys(AI_PROVIDER_DEFAULTS) as SeedProviderName[];
 
-function parseSeedProvider(raw: string | undefined): SeedProviderName {
-  const lower = (raw ?? '').trim().toLowerCase();
-  return (AI_PROVIDER_NAMES as string[]).includes(lower)
-    ? (lower as SeedProviderName)
-    : 'openrouter';
-}
+/** Defaults for a freshly seeded document; every value is editable in the admin UI. */
+const SEED_ACTIVE_PROVIDER: SeedProviderName = 'openrouter';
+const SEED_MAX_TOKENS = 1024;
+const SEED_TEMPERATURE = 0.4;
 
-function parseSeedNumber(raw: string | undefined, fallback: number): number {
-  const n = Number(raw);
-  return raw !== undefined && raw !== '' && Number.isFinite(n) ? n : fallback;
-}
-
+/**
+ * Seed the static provider catalog. No API keys are written here — each
+ * provider is configured (key, endpoint, model) from the admin UI at
+ * /ai-settings and stored in the database.
+ *
+ * Note: this runs as part of a full reset (`seed:db` clears every collection),
+ * so running it against a live database wipes the saved provider keys. The
+ * catalog exists only so the first admin visit has providers to pick from.
+ */
 async function seedAIConfig(): Promise<void> {
-  console.log('🔧 Seeding AI configuration from environment...');
+  console.log('🔧 Seeding AI provider configuration...');
 
-  const activeProvider = parseSeedProvider(process.env.AI_PROVIDER);
-  const envModel = process.env.AI_MODEL?.trim();
-  const maxTokens = parseSeedNumber(process.env.AI_MAX_TOKENS, 1024);
-  const temperature = parseSeedNumber(process.env.AI_TEMPERATURE, 0.4);
-  const siteName = process.env.AI_SITE_NAME?.trim() || 'Ibadah';
-  const siteUrl = process.env.AI_SITE_URL?.trim() || undefined;
-  const genericKey = process.env.AI_API_KEY?.trim();
+  const activeProvider = SEED_ACTIVE_PROVIDER;
+  const maxTokens = SEED_MAX_TOKENS;
+  const temperature = SEED_TEMPERATURE;
 
   const providers = AI_PROVIDER_NAMES.map((name) => {
     const meta = AI_PROVIDER_DEFAULTS[name];
-    const isActive = name === activeProvider;
-
-    // Provider-specific key wins; AI_API_KEY is a fallback for the active provider.
-    const apiKey =
-      process.env[meta.envKey]?.trim() || (isActive ? genericKey : undefined) || undefined;
-
-    // The active provider honors the AI_MODEL override.
-    const defaultModel = isActive && envModel ? envModel : meta.defaultModel;
-
-    // Ensure the chosen model is selectable in the admin UI dropdown.
-    const availableModels = meta.availableModels.includes(defaultModel)
-      ? meta.availableModels
-      : [defaultModel, ...meta.availableModels];
-
     return {
       name,
       displayName: meta.displayName,
-      enabled: Boolean(apiKey),
-      apiKey,
-      defaultModel,
-      availableModels,
+      enabled: false,
+      ...(meta.baseUrl ? { baseUrl: meta.baseUrl } : {}),
+      defaultModel: meta.defaultModel,
+      availableModels: meta.availableModels,
       supportsStreaming: true,
       supportsFunctionCalling: true,
       maxTokens,
@@ -220,36 +215,21 @@ async function seedAIConfig(): Promise<void> {
     };
   });
 
-  const topLevelModel = envModel || AI_PROVIDER_DEFAULTS[activeProvider].defaultModel;
-
   const config = new AIConfig({
     activeProvider,
-    defaultModel: topLevelModel,
+    defaultModel: AI_PROVIDER_DEFAULTS[activeProvider].defaultModel,
     maxTokens,
     temperature,
-    siteName,
-    siteUrl,
     providers,
   });
 
-  // pre-save hook derives apiKeyLastFour for display.
   await config.save();
 
   console.log('✅ AI configuration seeded:');
-  console.log(`   Active provider: ${config.activeProvider} (${topLevelModel})`);
+  console.log(`   Active provider: ${config.activeProvider} (${config.defaultModel})`);
   config.providers.forEach((p) => {
-    const keyState = p.apiKey ? `🔑 ****${p.apiKeyLastFour ?? ''}` : 'no key';
-    console.log(
-      `   - ${p.displayName}: ${p.enabled ? '✅ enabled' : '❌ disabled'} (${keyState})`,
-    );
+    console.log(`   - ${p.displayName}: no key`);
   });
-
-  if (!config.providers.some((p) => p.enabled)) {
-    console.warn(
-      '⚠️  No AI provider has an API key set. Add one to .env (e.g. OPENROUTER_API_KEY) ' +
-        'or configure it in the admin panel at /ai-settings.',
-    );
-  }
 }
 
 async function seedAdminUser(): Promise<mongoose.Types.ObjectId> {

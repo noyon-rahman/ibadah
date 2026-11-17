@@ -60,6 +60,8 @@ export interface AiConfig {
   temperature: number;
   siteUrl?: string;
   siteName?: string;
+  /** OpenAI-compatible API root. Required by the `custom` provider. */
+  baseUrl?: string;
 }
 
 export interface StreamChatOptions {
@@ -84,4 +86,17 @@ export interface AiProvider {
    * the agent orchestrator, not the provider.
    */
   streamCompletion(options: StreamCompletionOptions): AsyncIterable<CompletionChunk>;
+  /**
+   * List the model ids this endpoint advertises, for the admin model picker.
+   * Optional: providers without a discovery endpoint simply omit it and the
+   * UI falls back to the manually configured list.
+   */
+  listModels?(options?: { baseUrl?: string; apiKey?: string }): Promise<DiscoveredModel[]>;
+}
+
+/** A model id as reported by a provider's own `/models` endpoint. */
+export interface DiscoveredModel {
+  id: string;
+  /** Human label when the API provides one (Anthropic does, most others don't). */
+  displayName?: string;
 }

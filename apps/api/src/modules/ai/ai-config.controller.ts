@@ -7,12 +7,13 @@
 
 import type { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { aiConfigService } from '@/modules/ai/ai-config.service';
+import { aiConfigService, type AIConfigSettings } from '@/modules/ai/ai-config.service';
 import type { ProviderName } from '@/modules/ai/ai.types';
 import { 
   updateProviderConfigSchema, 
   testProviderSchema,
   setRateLimitSchema,
+  updateAIConfigSchema,
 } from '@/modules/ai/ai-config.validation';
 
 export class AiConfigController {
@@ -28,7 +29,13 @@ export class AiConfigController {
       res.status(StatusCodes.OK).json({
         success: true,
         data: {
+          // Must match the PATCH response shape (`activeProvider`) — the admin
+          // UI binds to this field, and a mismatched name made a reload always
+          // fall back to the default provider. `provider` is kept for older
+          // callers that read the short name.
+          activeProvider: config.activeProvider,
           provider: config.activeProvider,
+          defaultModel: config.defaultModel,
           model: config.defaultModel,
           maxTokens: config.maxTokens,
           temperature: config.temperature,
@@ -38,6 +45,65 @@ export class AiConfigController {
         },
       });
     } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Update system-wide AI settings
+   * PATCH /api/v1/ai/config
+   *
+   * Backs the admin "Settings" tab (active provider, default model, token
+   * budget, temperature, feature flags).
+   */
+  updateConfig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const parsed = updateAIConfigSchema.parse(req.body);
+
+      // Switching providers goes through `activateProvider`, which validates
+      // the target (key + endpoint) and mirrors that provider's own model.
+      // Everything else is a plain settings patch.
+      const { activeProvider, ...rest } = parsed;
+      let settings;
+
+      if (activeProvider) {
+        settings = await aiConfigService.activateProvider(activeProvider, req.user?.id);
+
+        // Apply any other fields sent in the same request (e.g. temperature).
+        if (Object.keys(rest).length > 0) {
+          settings = await aiConfigService.updateAISettings(
+            {
+              ...rest,
+              features: rest.features as AIConfigSettings['features'] | undefined,
+            },
+            req.user?.id,
+          );
+        }
+      } else {
+        settings = await aiConfigService.updateAISettings(
+          {
+            ...rest,
+            // Zod yields partial feature flags; the service merges them, so drop
+            // the optionality here rather than widening the service signature.
+            features: rest.features as AIConfigSettings['features'] | undefined,
+          },
+          req.user?.id,
+        );
+      }
+
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message: 'AI settings updated successfully',
+        data: settings,
+      });
+    } catch (error) {
+      // Activation failures are user-actionable (missing key/Base URL), so
+      // surface them as 400s rather than opaque 500s.
+      const message = (error as Error).message ?? '';
+      if (/no API key|needs a Base URL|not found/i.test(message)) {
+        res.status(StatusCodes.BAD_REQUEST).json({ success: false, message });
+        return;
+      }
       next(error);
     }
   };
@@ -89,12 +155,41 @@ export class AiConfigController {
   };
 
   /**
+   * Discover the model ids a provider serves, for the admin model picker.
+   * GET /api/v1/ai/config/provider/:name/models
+   *
+   * Optional `apiKey` / `baseUrl` query params let the picker work against
+   * unsaved form edits. Credentials are resolved server-side only.
+   */
+  listProviderModels = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const name = req.params.name as ProviderName;
+      const apiKey = typeof req.query.apiKey === 'string' ? req.query.apiKey : undefined;
+      const baseUrl = typeof req.query.baseUrl === 'string' ? req.query.baseUrl : undefined;
+
+      const result = await aiConfigService.listProviderModels(name, { apiKey, baseUrl });
+      const stored = await aiConfigService.getProviderWithKey(name);
+
+      res.status(StatusCodes.OK).json({
+        success: true,
+        data: {
+          models: result.models,
+          source: result.source,
+          defaultModel: stored?.defaultModel ?? null,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
    * Update provider configuration
    * PATCH /api/v1/ai/config/provider
    */
   updateProviderConfig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { name, ...updates } = updateProviderConfigSchema.parse(req.body);
+      const { name, ...rawUpdates } = updateProviderConfigSchema.parse(req.body);
 
       if (!name) {
         res.status(StatusCodes.BAD_REQUEST).json({
@@ -103,6 +198,11 @@ export class AiConfigController {
         });
         return;
       }
+
+      // `baseUrl: null` is the documented way to clear an endpoint, but the
+      // service types it as optional-string. Drop it from the update instead.
+      const { baseUrl: incomingBaseUrl, ...restUpdates } = rawUpdates;
+      const updates = incomingBaseUrl === null ? restUpdates : rawUpdates;
 
       const updated = await aiConfigService.updateProviderConfig(name, updates);
       
@@ -124,7 +224,12 @@ export class AiConfigController {
     try {
       const parsed = testProviderSchema.parse(req.body);
       
-      const testResult = await aiConfigService.testProvider(parsed.provider, parsed.apiKey, parsed.model);
+      const testResult = await aiConfigService.testProvider(
+        parsed.provider,
+        parsed.apiKey,
+        parsed.model,
+        parsed.baseUrl,
+      );
       
       res.status(StatusCodes.OK).json({
         success: testResult.success,

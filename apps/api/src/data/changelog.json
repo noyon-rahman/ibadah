@@ -4,6 +4,14 @@
     "date": "2026-11-17",
     "entries": [
       {
+        "category": "enhancement",
+        "title": "Restructure admin app and update references to shared packages"
+      },
+      {
+        "category": "enhancement",
+        "title": "Remove AI-related components and utilities"
+      },
+      {
         "category": "feature",
         "title": "Add recruiter intro popup with admin toggle and site-config module",
         "scope": "landing"

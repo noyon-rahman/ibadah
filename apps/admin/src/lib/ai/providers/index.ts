@@ -13,6 +13,7 @@ import { createOpenRouterProvider } from './openrouter';
 import { createOpenAiProvider } from './openai';
 import { createAnthropicProvider } from './anthropic';
 import { createGeminiProvider } from './gemini';
+import { createCustomProvider } from './custom';
 
 export function createProvider(config: AiConfig): ChatProvider {
   switch (config.provider) {
@@ -24,6 +25,8 @@ export function createProvider(config: AiConfig): ChatProvider {
       return createAnthropicProvider(config);
     case 'gemini':
       return createGeminiProvider(config);
+    case 'custom':
+      return createCustomProvider(config);
     default: {
       // Exhaustiveness check — if we add a new provider name and forget
       // to handle it here, TypeScript will fail this assignment.

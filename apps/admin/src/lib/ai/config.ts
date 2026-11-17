@@ -23,6 +23,7 @@ const DEFAULT_MODELS: Record<ProviderName, string> = {
   openai: 'gpt-4o-mini',
   anthropic: 'claude-3-5-haiku-latest',
   gemini: 'gemini-1.5-flash',
+  custom: 'Qwen/Qwen3.5-9B',
 };
 
 const PROVIDER_KEY_ENV: Record<ProviderName, string> = {
@@ -30,6 +31,7 @@ const PROVIDER_KEY_ENV: Record<ProviderName, string> = {
   openai: 'OPENAI_API_KEY',
   anthropic: 'ANTHROPIC_API_KEY',
   gemini: 'GEMINI_API_KEY',
+  custom: 'CUSTOM_AI_API_KEY',
 };
 
 const ALL_PROVIDERS: readonly ProviderName[] = [
@@ -37,6 +39,7 @@ const ALL_PROVIDERS: readonly ProviderName[] = [
   'openai',
   'anthropic',
   'gemini',
+  'custom',
 ];
 
 export interface AiConfig {
@@ -47,6 +50,8 @@ export interface AiConfig {
   temperature: number;
   siteUrl?: string;
   siteName?: string;
+  /** OpenAI-compatible API root. Required by the custom provider. */
+  baseUrl?: string;
 }
 
 export class AiConfigError extends Error {
@@ -98,5 +103,6 @@ export function getAiConfig(): AiConfig {
       process.env.NEXT_PUBLIC_ADMIN_URL?.trim() ||
       undefined,
     siteName: process.env.AI_SITE_NAME?.trim() || 'Ibadah Admin',
+    baseUrl: process.env.AI_BASE_URL?.trim() || undefined,
   };
 }
