@@ -48,6 +48,12 @@ export interface UsageStats {
   errorRate: number;
 }
 
+/**
+ * Placeholder the admin UI sends when the admin did not type a key, meaning
+ * "use the key already stored for this provider". Treat it as absent.
+ */
+export const STORED_KEY_SENTINEL = 'using-stored-key';
+
 export interface AIConfigSettings {
   activeProvider: ProviderName;
   fallbackProvider?: ProviderName;
@@ -262,11 +268,14 @@ class AIConfigService {
   }
 
   /**
-   * Test a provider connection
+   * Test a provider connection.
+   *
+   * `apiKey` is optional: when omitted (or blank), the key stored for that
+   * provider is used, which is what the admin UI relies on after a reload.
    */
   async testProvider(
     providerName: ProviderName,
-    apiKey: string,
+    apiKey?: string,
     model?: string,
     baseUrl?: string
   ): Promise<{ success: boolean; message: string; latency: number; modelAvailable: boolean }> {
@@ -276,11 +285,29 @@ class AIConfigService {
       // Import the provider dynamically
       const { createProvider } = await import('@/modules/ai/providers/index');
 
+      const stored = await this.getProviderWithKey(providerName);
+
+      // Resolve the credential to test with. A blank/placeholder key means
+      // "use the one already saved" — the admin UI never re-sends a stored key,
+      // so without this fallback every test after a page reload failed with a
+      // confusing upstream 401.
+      const isPlaceholder =
+        !apiKey || apiKey.trim() === '' || apiKey === STORED_KEY_SENTINEL;
+      const resolvedApiKey = isPlaceholder ? stored?.apiKey : apiKey;
+
+      if (!resolvedApiKey) {
+        return {
+          success: false,
+          message: `No API key available to test "${providerName}". Enter a key or save one first.`,
+          latency: Date.now() - startTime,
+          modelAvailable: false,
+        };
+      }
+
       // Fall back to the stored endpoint when the caller didn't send one, so
       // "Test Connection" works for a custom provider already saved in config.
       let resolvedBaseUrl = baseUrl;
       if (!resolvedBaseUrl && providerName === 'custom') {
-        const stored = await this.getProviderWithKey(providerName);
         resolvedBaseUrl = stored?.baseUrl ?? undefined;
       }
 
@@ -288,7 +315,7 @@ class AIConfigService {
 
       const provider = createProvider({
         provider: providerName,
-        apiKey,
+        apiKey: resolvedApiKey,
         model: resolvedModel,
         maxTokens: 5,
         temperature: 0,

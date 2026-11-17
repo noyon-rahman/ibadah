@@ -157,10 +157,12 @@ export async function updateProvider(
  * Test provider connection. Unlike the other calls this never throws — a
  * failed test is a normal, displayable outcome — so it maps both success
  * and error into the `TestResult` shape.
+ *
+ * Omit `apiKey` to test with the key already stored for the provider.
  */
 export async function testProvider(
   provider: string,
-  apiKey: string,
+  apiKey?: string,
   model?: string,
   baseUrl?: string
 ): Promise<TestResult> {

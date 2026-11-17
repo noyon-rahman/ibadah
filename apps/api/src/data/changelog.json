@@ -4,6 +4,11 @@
     "date": "2026-11-17",
     "entries": [
       {
+        "category": "feature",
+        "title": "Enhance AI settings page with model discovery and custom provider support",
+        "scope": "ai-settings"
+      },
+      {
         "category": "enhancement",
         "title": "Restructure admin app and update references to shared packages"
       },

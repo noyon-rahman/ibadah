@@ -27,7 +27,10 @@ export const updateProviderConfigSchema = z.object({
 
 export const testProviderSchema = z.object({
   provider: providerNameEnum,
-  apiKey: z.string().min(10).max(500),
+  // Omit to test with the key already stored for this provider. The admin UI
+  // never re-sends a stored key, so requiring one here broke every test after
+  // a page reload.
+  apiKey: z.string().min(10).max(500).optional(),
   model: z.string().min(1).max(200).optional(),
   baseUrl: z.string().url().max(300).optional(),
 });

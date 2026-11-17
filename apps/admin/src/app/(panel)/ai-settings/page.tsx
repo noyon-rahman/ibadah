@@ -424,12 +424,15 @@ export default function AISettingsPage() {
 
       // If no new API key provided, we can't test without the stored key
       if (!apiKey && !provider.apiKeyLastFour) {
-        throw new Error('No API key available for testing');
+        throw new Error('Enter an API key to test this provider — none is saved yet.');
       }
 
+      // Send no key when none was typed: the server falls back to the saved
+      // key. (Sending a placeholder string made it hit the upstream as a real
+      // key, so every test after a reload failed with 401 Invalid API key.)
       const data = await testProvider(
         selectedProvider,
-        apiKey || 'using-stored-key',
+        apiKey,
         provider.defaultModel,
         selectedProvider === 'custom' ? provider.baseUrl : undefined,
       );
