@@ -4,6 +4,16 @@
     "date": "2026-11-17",
     "entries": [
       {
+        "category": "enhancement",
+        "title": "Simplify .env.example by removing unused variables and adding SERVER_URL",
+        "scope": "env"
+      },
+      {
+        "category": "fix",
+        "title": "Improve error handling and API key management",
+        "scope": "ai-settings"
+      },
+      {
         "category": "feature",
         "title": "Enhance AI settings page with model discovery and custom provider support",
         "scope": "ai-settings"
