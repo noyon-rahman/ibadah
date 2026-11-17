@@ -23,8 +23,9 @@ COPY . .
 
 # NEXT_PUBLIC_* values are inlined into the client bundle at BUILD time, so
 # they must be present here — setting them only at runtime has no effect.
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_ADMIN_URL
+# Defaults guard against an empty value ('' would make new URL('') throw).
+ARG NEXT_PUBLIC_API_URL=https://api.ibadah.noyonrahman.com/api/v1
+ARG NEXT_PUBLIC_ADMIN_URL=https://admin.ibadah.noyonrahman.com
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_ADMIN_URL=$NEXT_PUBLIC_ADMIN_URL
 

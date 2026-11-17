@@ -4,9 +4,16 @@ import { routing } from '@/i18n/routing';
 import { ogImageUrl } from '@/lib/og-url';
 import type { AppLocale } from '@/i18n/routing';
 
-/** Canonical site origin — set `NEXT_PUBLIC_SITE_URL` in production. */
+/**
+ * Canonical site origin — set `NEXT_PUBLIC_SITE_URL` in production.
+ *
+ * Guard against an empty string: Docker build args that are declared but not
+ * passed arrive as `''`, which `??` would happily return, producing
+ * `new URL('')` during metadata generation and failing the build.
+ */
 export function getSiteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  return configured ? configured : 'http://localhost:3000';
 }
 
 /** App segments that must never be indexed (locale prefix is added in robots.txt). */

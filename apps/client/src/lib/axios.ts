@@ -14,7 +14,7 @@
  */
 import axios, { type AxiosError, type AxiosInstance } from 'axios';
 
-export const baseURL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+export const baseURL = process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:5000/api/v1';
 
 export class ApiClientError extends Error {
   status: number;

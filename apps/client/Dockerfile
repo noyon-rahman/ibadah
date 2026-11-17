@@ -22,8 +22,9 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # NEXT_PUBLIC_* values are inlined at BUILD time — pass them as build args.
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_SITE_URL
+# Defaults guard against an empty value ('' would make new URL('') throw).
+ARG NEXT_PUBLIC_API_URL=https://api.ibadah.noyonrahman.com/api/v1
+ARG NEXT_PUBLIC_SITE_URL=https://ibadah.noyonrahman.com
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 

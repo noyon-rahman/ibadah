@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:3001'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_ADMIN_URL?.trim() || 'http://localhost:3001'),
   title: {
     default: 'Ibadah Admin — Operations Console',
     template: '%s · Ibadah Admin',

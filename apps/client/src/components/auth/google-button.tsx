@@ -19,7 +19,7 @@ import { cn } from '@ibadah/shared';
  * the auth screen on first paint.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:5000/api/v1';
 
 interface GoogleButtonProps {
   disabled?: boolean;
