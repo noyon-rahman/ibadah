@@ -8,7 +8,26 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    // Make package `exports`/`imports` resolution deterministic.
+    //
+    // `helmet` and `express-rate-limit` ship dual CJS/ESM declarations
+    // (`index.d.cts` + `index.d.mts`) but declare no `types` condition in
+    // their `exports` map. Under the inherited `moduleResolution: "Bundler"`,
+    // TypeScript picks a declaration from the `import` condition, and which
+    // file that lands on depends on how node_modules is laid out (pnpm's
+    // symlinked virtual store here vs. Vercel's install). When it lands on
+    // the CJS declaration the default import is typed as
+    // `typeof import(...)`, which is not callable and fails the build with:
+    //
+    //   error TS2349: This expression is not callable.
+    //     Type 'typeof import(".../helmet/index")' has no call signatures.
+    //
+    // Declaring the conditions explicitly pins resolution to the ESM
+    // declarations everywhere, so local and Vercel type-check identically.
+    "resolvePackageJsonExports": true,
+    "resolvePackageJsonImports": true,
+    "customConditions": ["import", "types", "node"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"],
