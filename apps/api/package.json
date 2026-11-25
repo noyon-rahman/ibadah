@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "node --watch --inspect=0.0.0.0:9229 --import ./esm-loader.mjs --experimental-transform-types src/server.ts",
-    "generate:changelog": "node --import ./esm-loader.mjs --experimental-transform-types src/scripts/generateChangelog.ts",
+    "generate:changelog": "node scripts/generate-changelog.mjs",
     "build": "pnpm generate:changelog && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node dist/server.js",
     "lint": "eslint \"src/**/*.ts\"",
