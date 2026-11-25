@@ -1,13 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { catchAsync } from '@/utils/catchAsync';
-import { sendResponse } from '@/utils/sendResponse';
-import { onboardingService } from '@/modules/onboarding/onboarding.service';
+import { catchAsync } from '../../utils/catchAsync.js';
+import { sendResponse } from '../../utils/sendResponse.js';
+import { onboardingService } from './onboarding.service.js';
 import type {
   ListOnboardingDto,
   OnboardingSummaryDto,
   SubmitOnboardingDto,
-} from '@/modules/onboarding/onboarding.validation';
+} from './onboarding.validation.js';
 
 export const onboardingController = {
   submit: catchAsync(async (req, res) => {

@@ -16,8 +16,8 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
 
-import { connectDatabase, disconnectDatabase } from '@/config/db';
-import { salahService } from '@/modules/salah/salah.service';
+import { connectDatabase, disconnectDatabase } from '../config/db.js';
+import { salahService } from '../modules/salah/salah.service.js';
 
 async function run(): Promise<void> {
   await connectDatabase();

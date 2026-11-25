@@ -1,10 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 import { Types } from 'mongoose';
 
-import { ApiError } from '@/utils/ApiError';
-import { formatDayKey, localDayKey, toDayKey } from '@/utils/date';
-import { logger } from '@/utils/logger';
-import { User } from '@/modules/user/user.model';
+import { ApiError } from '../../utils/ApiError.js';
+import { formatDayKey, localDayKey, toDayKey } from '../../utils/date.js';
+import { logger } from '../../utils/logger.js';
+import { User } from '../user/user.model.js';
 import {
   SALAH_DEFAULT_POINTS,
   PRAYER_NAMES,
@@ -14,14 +14,14 @@ import {
   type PrayerName,
   type PrayerStatus,
   type SalahScoring,
-} from '@/modules/salah/salah.constants';
-import { SalahDay } from '@/modules/salah/salah.model';
+} from './salah.constants.js';
+import { SalahDay } from './salah.model.js';
 import type {
   IJummahEntry,
   IPrayerEntry,
   IPrayers,
   ISalahDayDocument,
-} from '@/modules/salah/salah.interface';
+} from './salah.interface.js';
 
 /**
  * The two per-user settings the salah engine needs together: the merged

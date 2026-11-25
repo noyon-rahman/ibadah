@@ -3,7 +3,7 @@
  * shared OpenAI-compatible base).
  */
 import OpenAI from 'openai';
-import { OpenAiCompatibleProvider } from '@/modules/ai/providers/openai-compatible.provider';
+import { OpenAiCompatibleProvider } from './openai-compatible.provider.js';
 
 export class OpenAiProvider extends OpenAiCompatibleProvider {
   private readonly _client: OpenAI;

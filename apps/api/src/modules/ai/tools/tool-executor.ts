@@ -5,9 +5,9 @@
  * audit logging, and rate limiting.
  */
 
-import { toolRegistry } from '@/modules/ai/tools/tool-registry';
-import { auditService } from '@/modules/audit/audit.service';
-import type { ToolContext, ToolResult } from '@/modules/ai/tools/ai-tools.types';
+import { toolRegistry } from './tool-registry.js';
+import { auditService } from '../../audit/audit.service.js';
+import type { ToolContext, ToolResult } from './ai-tools.types.js';
 
 export interface ToolExecutionOptions {
   enableAuditLog?: boolean;

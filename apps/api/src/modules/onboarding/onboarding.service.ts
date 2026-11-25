@@ -1,17 +1,17 @@
 import { Types } from 'mongoose';
 import type { Request } from 'express';
 
-import { User } from '@/modules/user/user.model';
-import { OnboardingSubmission } from '@/modules/onboarding/onboarding.model';
+import { User } from '../user/user.model.js';
+import { OnboardingSubmission } from './onboarding.model.js';
 import type {
   OnboardingFocus,
   OnboardingPersona,
-} from '@/modules/onboarding/onboarding.interface';
+} from './onboarding.interface.js';
 import type {
   ListOnboardingDto,
   OnboardingSummaryDto,
   SubmitOnboardingDto,
-} from '@/modules/onboarding/onboarding.validation';
+} from './onboarding.validation.js';
 
 function toApiShape(doc: {
   _id: Types.ObjectId;

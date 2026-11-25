@@ -6,7 +6,7 @@
  */
 
 import { type Document, type Model, Schema, model } from 'mongoose';
-import type { ProviderName } from '@/modules/ai/ai.types';
+import type { ProviderName } from './ai.types.js';
 
 export interface IProviderConfig {
   name: ProviderName;

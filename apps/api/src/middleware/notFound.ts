@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import rateLimit from 'express-rate-limit';
 import { StatusCodes } from 'http-status-codes';
-import { logger } from '@/utils/logger';
+import { logger } from '../utils/logger.js';
 
 const notFoundLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

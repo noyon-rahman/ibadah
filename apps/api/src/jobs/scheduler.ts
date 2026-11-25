@@ -1,7 +1,7 @@
 import cron, { type ScheduledTask } from 'node-cron';
 
-import { salahService } from '@/modules/salah/salah.service';
-import { logger } from '@/utils/logger';
+import { salahService } from '../modules/salah/salah.service.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Salah auto-miss sweep.

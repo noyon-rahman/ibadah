@@ -1,9 +1,9 @@
 import { Types } from 'mongoose';
-import { toDayKey } from '@/utils/date';
-import { DhikrDay } from '@/modules/dhikr/dhikr.model';
-import { DEFAULT_DHIKR_PRESETS } from '@/modules/dhikr/dhikr.constants';
-import { defaultsService } from '@/modules/admin/defaults.service';
-import type { IDhikrEntry } from '@/modules/dhikr/dhikr.interface';
+import { toDayKey } from '../../utils/date.js';
+import { DhikrDay } from './dhikr.model.js';
+import { DEFAULT_DHIKR_PRESETS } from './dhikr.constants.js';
+import { defaultsService } from '../admin/defaults.service.js';
+import type { IDhikrEntry } from './dhikr.interface.js';
 
 export const dhikrService = {
   async getDay(userId: string, dateStr: string) {

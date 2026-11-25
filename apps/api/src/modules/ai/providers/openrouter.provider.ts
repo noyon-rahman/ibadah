@@ -3,7 +3,7 @@
  * function calling). Adds OpenRouter's attribution headers.
  */
 import OpenAI from 'openai';
-import { OpenAiCompatibleProvider } from '@/modules/ai/providers/openai-compatible.provider';
+import { OpenAiCompatibleProvider } from './openai-compatible.provider.js';
 
 export class OpenRouterProvider extends OpenAiCompatibleProvider {
   private readonly _client: OpenAI;

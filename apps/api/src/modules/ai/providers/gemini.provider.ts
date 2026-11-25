@@ -17,7 +17,7 @@ import type {
   StreamChatOptions,
   StreamCompletionOptions,
   ToolSpec,
-} from '@/modules/ai/ai.types';
+} from '../ai.types.js';
 
 /**
  * Translate internal messages into Gemini `Content[]`. Gemini keeps the

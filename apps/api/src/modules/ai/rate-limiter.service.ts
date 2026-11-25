@@ -5,7 +5,7 @@
  * different tiers (free, standard, premium) and per-provider limits.
  */
 
-import type { ProviderName } from '@/modules/ai/ai.types';
+import type { ProviderName } from './ai.types.js';
 
 export interface RateLimitState {
   requests: {

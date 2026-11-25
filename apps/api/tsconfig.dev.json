@@ -2,11 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"]
-    }
+    "moduleResolution": "NodeNext"
   },
   "ts-node": {
     "transpileOnly": true,

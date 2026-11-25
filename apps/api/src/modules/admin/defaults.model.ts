@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import type { IDefaultsConfigDocument, IDefaultsConfigModel } from '@/modules/admin/defaults.interface';
+import type { IDefaultsConfigDocument, IDefaultsConfigModel } from './defaults.interface.js';
 
 const habitDefaultSchema = new Schema(
   {

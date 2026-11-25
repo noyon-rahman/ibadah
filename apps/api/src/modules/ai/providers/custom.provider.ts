@@ -11,8 +11,8 @@
  * chat text, and surfacing chain-of-thought would leak internal reasoning.
  */
 import OpenAI from 'openai';
-import { OpenAiCompatibleProvider } from '@/modules/ai/providers/openai-compatible.provider';
-import type { DiscoveredModel } from '@/modules/ai/ai.types';
+import { OpenAiCompatibleProvider } from './openai-compatible.provider.js';
+import type { DiscoveredModel } from '../ai.types.js';
 
 export class CustomProvider extends OpenAiCompatibleProvider {
   private readonly apiKey: string;

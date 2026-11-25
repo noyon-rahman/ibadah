@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
-import { requireAdmin, requireAuth } from '@/middleware/auth';
-import { validate } from '@/middleware/validate';
-import { siteConfigController } from '@/modules/site-config/site-config.controller';
-import { updateRecruiterIntroSchema } from '@/modules/site-config/site-config.validation';
+import { requireAdmin, requireAuth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { siteConfigController } from './site-config.controller.js';
+import { updateRecruiterIntroSchema } from './site-config.validation.js';
 
 /** Public, no auth. Read by the marketing site on every visit. */
 export const publicSiteConfigRouter = Router();

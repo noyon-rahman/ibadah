@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import type { IReleaseDocument, IReleaseModel } from '@/modules/release/release.interface';
+import type { IReleaseDocument, IReleaseModel } from './release.interface.js';
 
 const releaseEntrySchema = new Schema(
   {

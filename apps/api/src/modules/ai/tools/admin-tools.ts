@@ -6,23 +6,23 @@
  */
 
 import { Types } from 'mongoose';
-import { User } from '@/modules/user/user.model';
-import { ModerationFlag } from '@/modules/moderation/moderation.model';
-import { adminAnalyticsService } from '@/modules/admin/analytics.service';
-import { adminService } from '@/modules/admin/admin.service';
-import { auditService } from '@/modules/audit/audit.service';
-import { moderationService } from '@/modules/moderation/moderation.service';
-import { defaultsService } from '@/modules/admin/defaults.service';
-import { aiConfigService } from '@/modules/ai/ai-config.service';
-import { statsService } from '@/modules/stats/stats.service';
-import { salahService } from '@/modules/salah/salah.service';
-import { quranService } from '@/modules/quran/quran.service';
-import { dhikrService } from '@/modules/dhikr/dhikr.service';
-import { habitService } from '@/modules/habit/habit.service';
-import { checklistService } from '@/modules/checklist/checklist.service';
-import type { ModerationStatus } from '@/modules/moderation/moderation.interface';
-import type { UserRole } from '@/modules/user/user.interface';
-import type { ToolDefinition, ToolHandler, ToolRegistryEntry } from '@/modules/ai/tools/ai-tools.types';
+import { User } from '../../user/user.model.js';
+import { ModerationFlag } from '../../moderation/moderation.model.js';
+import { adminAnalyticsService } from '../../admin/analytics.service.js';
+import { adminService } from '../../admin/admin.service.js';
+import { auditService } from '../../audit/audit.service.js';
+import { moderationService } from '../../moderation/moderation.service.js';
+import { defaultsService } from '../../admin/defaults.service.js';
+import { aiConfigService } from '../ai-config.service.js';
+import { statsService } from '../../stats/stats.service.js';
+import { salahService } from '../../salah/salah.service.js';
+import { quranService } from '../../quran/quran.service.js';
+import { dhikrService } from '../../dhikr/dhikr.service.js';
+import { habitService } from '../../habit/habit.service.js';
+import { checklistService } from '../../checklist/checklist.service.js';
+import type { ModerationStatus } from '../../moderation/moderation.interface.js';
+import type { UserRole } from '../../user/user.interface.js';
+import type { ToolDefinition, ToolHandler, ToolRegistryEntry } from './ai-tools.types.js';
 
 // User Management Tools
 

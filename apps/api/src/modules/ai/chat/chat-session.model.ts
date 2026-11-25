@@ -2,7 +2,7 @@
  * Chat session Mongoose model
  */
 import { Schema, model } from 'mongoose';
-import type { IChatSessionDocument, IChatSessionModel } from '@/modules/ai/chat/chat-session.interface';
+import type { IChatSessionDocument, IChatSessionModel } from './chat-session.interface.js';
 
 const chatSessionSchema = new Schema<IChatSessionDocument, IChatSessionModel>(
   {

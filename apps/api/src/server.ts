@@ -1,9 +1,9 @@
-import { createApp } from '@/app';
-import { connectDatabase, disconnectDatabase } from '@/config/db';
-import { env } from '@/config/env';
-import { startScheduledJobs, stopScheduledJobs } from '@/jobs/scheduler';
-import { releaseService } from '@/modules/release/release.service';
-import { logger } from '@/utils/logger';
+import { createApp } from './app.js';
+import { connectDatabase, disconnectDatabase } from './config/db.js';
+import { env } from './config/env.js';
+import { startScheduledJobs, stopScheduledJobs } from './jobs/scheduler.js';
+import { releaseService } from './modules/release/release.service.js';
+import { logger } from './utils/logger.js';
 
 async function bootstrap(): Promise<void> {
   await connectDatabase();

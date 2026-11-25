@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 
-import { optionalAuth, requireAdmin, requireAuth } from '@/middleware/auth';
-import { validate } from '@/middleware/validate';
-import { onboardingController } from '@/modules/onboarding/onboarding.controller';
+import { optionalAuth, requireAdmin, requireAuth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { onboardingController } from './onboarding.controller.js';
 import {
   listOnboardingSchema,
   onboardingSummarySchema,
   submitOnboardingSchema,
-} from '@/modules/onboarding/onboarding.validation';
+} from './onboarding.validation.js';
 
 const submitLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,

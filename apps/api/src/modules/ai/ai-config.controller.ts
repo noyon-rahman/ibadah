@@ -7,14 +7,14 @@
 
 import type { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { aiConfigService, type AIConfigSettings } from '@/modules/ai/ai-config.service';
-import type { ProviderName } from '@/modules/ai/ai.types';
+import { aiConfigService, type AIConfigSettings } from './ai-config.service.js';
+import type { ProviderName } from './ai.types.js';
 import { 
   updateProviderConfigSchema, 
   testProviderSchema,
   setRateLimitSchema,
   updateAIConfigSchema,
-} from '@/modules/ai/ai-config.validation';
+} from './ai-config.validation.js';
 
 export class AiConfigController {
   /**

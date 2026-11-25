@@ -1,26 +1,26 @@
 import { Router } from 'express';
 
-import { authRouter } from '@/modules/auth/auth.routes';
-import { userRouter } from '@/modules/user/user.routes';
-import { salahRouter } from '@/modules/salah/salah.routes';
-import { quranRouter } from '@/modules/quran/quran.routes';
-import { dhikrRouter } from '@/modules/dhikr/dhikr.routes';
-import { habitRouter } from '@/modules/habit/habit.routes';
-import { checklistRouter } from '@/modules/checklist/checklist.routes';
-import { statsRouter } from '@/modules/stats/stats.routes';
-import { adminRouter } from '@/modules/admin/admin.routes';
-import { guestAiRouter, clientAiRouter, adminAiRouter } from '@/modules/ai/ai.routes';
-import { aiConfigRouter } from '@/modules/ai/ai-config.routes';
-import { clientReportRouter, adminReportRouter } from '@/modules/report/report.routes';
+import { authRouter } from '../modules/auth/auth.routes.js';
+import { userRouter } from '../modules/user/user.routes.js';
+import { salahRouter } from '../modules/salah/salah.routes.js';
+import { quranRouter } from '../modules/quran/quran.routes.js';
+import { dhikrRouter } from '../modules/dhikr/dhikr.routes.js';
+import { habitRouter } from '../modules/habit/habit.routes.js';
+import { checklistRouter } from '../modules/checklist/checklist.routes.js';
+import { statsRouter } from '../modules/stats/stats.routes.js';
+import { adminRouter } from '../modules/admin/admin.routes.js';
+import { guestAiRouter, clientAiRouter, adminAiRouter } from '../modules/ai/ai.routes.js';
+import { aiConfigRouter } from '../modules/ai/ai-config.routes.js';
+import { clientReportRouter, adminReportRouter } from '../modules/report/report.routes.js';
 import {
   adminOnboardingRouter,
   clientOnboardingRouter,
-} from '@/modules/onboarding/onboarding.routes';
-import { releaseRouter } from '@/modules/release/release.route';
+} from '../modules/onboarding/onboarding.routes.js';
+import { releaseRouter } from '../modules/release/release.route.js';
 import {
   adminSiteConfigRouter,
   publicSiteConfigRouter,
-} from '@/modules/site-config/site-config.routes';
+} from '../modules/site-config/site-config.routes.js';
 
 export const apiRouter = Router();
 

@@ -52,10 +52,16 @@ its watch build — otherwise consumers see stale types.
 
 ## API (`apps/api`)
 
-- **ESM with `@/*` path alias.** Dev runs via `node --watch --import ./esm-loader.mjs`;
-  `esm-loader.mjs` + `esm-resolve.mjs` implement `@/*` → `src/*` and extensionless imports for
-  Node's ESM pipeline. `ts-node` is NOT used directly, and there are no path aliases in
-  `dist` — the build runs `tsc` then `tsc-alias` so emitted imports resolve.
+- **ESM with relative imports.** Dev runs via `node --watch --import ./esm-loader.mjs`;
+  `esm-loader.mjs` + `esm-resolve.mjs` add `ts-node/esm` transpilation and let extensionless
+  relative imports resolve to `.ts` for Node's ESM pipeline. `ts-node` is NOT used directly.
+  Source imports use **relative paths with explicit `.js` extensions** (`./config/env.js`) —
+  the old `@/*` alias was removed because Vercel does not support TS path mappings for
+  Functions, and explicit extensions mean the `tsc` output runs unbundled with no
+  post-processing step.
+- **Vercel entry:** `src/index.ts` re-exports the default handler from `src/serverless.ts`
+  (connect Mongo once per cold start, seed releases, never `app.listen`). `src/server.ts`
+  remains the long-running/Docker entry.
 - **Config is validated at startup** in [env.ts](apps/api/src/config/env.ts) (Zod, exits on
   failure). Add new server env vars there and to `.env.example`, not via ad-hoc
   `process.env` reads (the only exceptions are the seed scripts).

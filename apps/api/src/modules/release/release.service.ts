@@ -2,8 +2,8 @@ import { readFileSync, existsSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-import { Release } from '@/modules/release/release.model';
-import { logger } from '@/utils/logger';
+import { Release } from './release.model.js';
+import { logger } from '../../utils/logger.js';
 
 interface ChangelogEntry {
   category: 'feature' | 'fix' | 'enhancement';

@@ -1,8 +1,8 @@
-import { SiteConfig } from '@/modules/site-config/site-config.model';
+import { SiteConfig } from './site-config.model.js';
 import type {
   IRecruiterIntroConfig,
   PublicSiteConfig,
-} from '@/modules/site-config/site-config.interface';
+} from './site-config.interface.js';
 
 /**
  * Fallbacks for a fresh database (no admin has saved yet). The pop-up

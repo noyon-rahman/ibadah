@@ -1,11 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { catchAsync } from '@/utils/catchAsync';
-import { sendResponse } from '@/utils/sendResponse';
-import { ApiError } from '@/utils/ApiError';
-import { auditService } from '@/modules/audit/audit.service';
-import { siteConfigService } from '@/modules/site-config/site-config.service';
-import type { UpdateRecruiterIntroDto } from '@/modules/site-config/site-config.validation';
+import { catchAsync } from '../../utils/catchAsync.js';
+import { sendResponse } from '../../utils/sendResponse.js';
+import { ApiError } from '../../utils/ApiError.js';
+import { auditService } from '../audit/audit.service.js';
+import { siteConfigService } from './site-config.service.js';
+import type { UpdateRecruiterIntroDto } from './site-config.validation.js';
 
 const actorOf = (req: { user?: { id: string } }): string => {
   if (!req.user) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Not authenticated');

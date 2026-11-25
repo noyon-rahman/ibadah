@@ -4,16 +4,16 @@
  * Manages registration and lookup of AI tools for both client and admin users.
  */
 
-import { clientTools } from '@/modules/ai/tools/client-tools';
-import { adminTools } from '@/modules/ai/tools/admin-tools';
+import { clientTools } from './client-tools.js';
+import { adminTools } from './admin-tools.js';
 import type {
   ToolRegistryEntry,
   ToolDefinition,
   ToolParameter,
   ToolContext,
   ToolResult,
-} from '@/modules/ai/tools/ai-tools.types';
-import type { ToolSpec } from '@/modules/ai/ai.types';
+} from './ai-tools.types.js';
+import type { ToolSpec } from '../ai.types.js';
 
 /**
  * Convert an internal `ToolParameter` into a clean JSON-Schema node that

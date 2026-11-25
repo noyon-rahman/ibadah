@@ -6,8 +6,8 @@
  * API keys are never read from the environment.
  */
 
-import type { AiConfig } from '@/modules/ai/ai.types';
-import { aiConfigService } from '@/modules/ai/ai-config.service';
+import type { AiConfig } from './ai.types.js';
+import { aiConfigService } from './ai-config.service.js';
 
 /**
  * Reasoning models (River's GLM, Kimi, Qwen, …) spend output tokens on hidden

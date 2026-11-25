@@ -1,10 +1,10 @@
-import { DEFAULT_DHIKR_PRESETS } from '@/modules/dhikr/dhikr.constants';
-import { DefaultsConfig } from '@/modules/admin/defaults.model';
+import { DEFAULT_DHIKR_PRESETS } from '../dhikr/dhikr.constants.js';
+import { DefaultsConfig } from './defaults.model.js';
 import type {
   IChecklistDefault,
   IDhikrDefault,
   IHabitDefault,
-} from '@/modules/admin/defaults.interface';
+} from './defaults.interface.js';
 
 /**
  * Hard-coded fallbacks used when the DefaultsConfig collection is empty

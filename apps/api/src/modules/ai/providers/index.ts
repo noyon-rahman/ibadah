@@ -1,12 +1,12 @@
 /**
  * Provider factory
  */
-import type { AiConfig, AiProvider } from '@/modules/ai/ai.types';
-import { OpenAiProvider } from '@/modules/ai/providers/openai.provider';
-import { AnthropicProvider } from '@/modules/ai/providers/anthropic.provider';
-import { GeminiProvider } from '@/modules/ai/providers/gemini.provider';
-import { OpenRouterProvider } from '@/modules/ai/providers/openrouter.provider';
-import { CustomProvider } from '@/modules/ai/providers/custom.provider';
+import type { AiConfig, AiProvider } from '../ai.types.js';
+import { OpenAiProvider } from './openai.provider.js';
+import { AnthropicProvider } from './anthropic.provider.js';
+import { GeminiProvider } from './gemini.provider.js';
+import { OpenRouterProvider } from './openrouter.provider.js';
+import { CustomProvider } from './custom.provider.js';
 
 export function createProvider(config: AiConfig): AiProvider {
   switch (config.provider) {

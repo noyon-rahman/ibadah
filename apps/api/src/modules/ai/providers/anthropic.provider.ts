@@ -16,7 +16,7 @@ import type {
   StreamChatOptions,
   StreamCompletionOptions,
   ToolSpec,
-} from '@/modules/ai/ai.types';
+} from '../ai.types.js';
 
 /**
  * Translate our internal messages into Anthropic's format. Anthropic

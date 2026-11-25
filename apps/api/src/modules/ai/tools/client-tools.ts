@@ -5,15 +5,15 @@
  * and perform actions within their permission scope.
  */
 
-import { statsService } from '@/modules/stats/stats.service';
-import { salahService } from '@/modules/salah/salah.service';
-import { quranService } from '@/modules/quran/quran.service';
-import { dhikrService } from '@/modules/dhikr/dhikr.service';
-import { habitService } from '@/modules/habit/habit.service';
-import { checklistService } from '@/modules/checklist/checklist.service';
-import { userService } from '@/modules/user/user.service';
-import { adminService } from '@/modules/admin/admin.service';
-import type { ToolDefinition, ToolHandler, ToolRegistryEntry } from '@/modules/ai/tools/ai-tools.types';
+import { statsService } from '../../stats/stats.service.js';
+import { salahService } from '../../salah/salah.service.js';
+import { quranService } from '../../quran/quran.service.js';
+import { dhikrService } from '../../dhikr/dhikr.service.js';
+import { habitService } from '../../habit/habit.service.js';
+import { checklistService } from '../../checklist/checklist.service.js';
+import { userService } from '../../user/user.service.js';
+import { adminService } from '../../admin/admin.service.js';
+import type { ToolDefinition, ToolHandler, ToolRegistryEntry } from './ai-tools.types.js';
 
 // Tool Definitions
 

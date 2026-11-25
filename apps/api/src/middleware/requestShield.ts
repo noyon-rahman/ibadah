@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { logger } from '@/utils/logger';
+import { logger } from '../utils/logger.js';
 
 const SUSPICIOUS_PATH_PATTERNS: RegExp[] = [
   /\.(env|git|vscode|DS_Store|idea|aws|ssh)($|\/)/i,

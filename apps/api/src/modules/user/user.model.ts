@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import type { IUserDocument, IUserModel, SafeUser } from '@/modules/user/user.interface';
+import type { IUserDocument, IUserModel, SafeUser } from './user.interface.js';
 
 const checklistTemplateItemSchema = new Schema(
   {

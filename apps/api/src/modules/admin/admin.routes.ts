@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import { requireAdmin, requireAuth } from '@/middleware/auth';
-import { validate } from '@/middleware/validate';
-import { adminController } from '@/modules/admin/admin.controller';
+import { requireAdmin, requireAuth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { adminController } from './admin.controller.js';
 import {
   activeUsersSchema,
   analyticsRangeSchema,
@@ -12,15 +12,15 @@ import {
   updateUserSchema,
   userAnalyticsSchema,
   userIdParamsSchema,
-} from '@/modules/admin/admin.validation';
-import { moderationController } from '@/modules/moderation/moderation.controller';
+} from './admin.validation.js';
+import { moderationController } from '../moderation/moderation.controller.js';
 import {
   decideSchema,
   flagManualSchema,
   listModerationSchema,
-} from '@/modules/moderation/moderation.validation';
-import { auditController } from '@/modules/audit/audit.controller';
-import { listAuditSchema } from '@/modules/audit/audit.validation';
+} from '../moderation/moderation.validation.js';
+import { auditController } from '../audit/audit.controller.js';
+import { listAuditSchema } from '../audit/audit.validation.js';
 
 export const adminRouter = Router();
 

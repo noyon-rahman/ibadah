@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { requireAuth } from '@/middleware/auth';
-import { validate } from '@/middleware/validate';
-import { salahController } from '@/modules/salah/salah.controller';
+import { requireAuth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { salahController } from './salah.controller.js';
 import {
   getDaySchema,
   rangeQuerySchema,
   updateJummahSchema,
   updatePrayerSchema,
   upsertDaySchema,
-} from '@/modules/salah/salah.validation';
+} from './salah.validation.js';
 
 export const salahRouter = Router();
 

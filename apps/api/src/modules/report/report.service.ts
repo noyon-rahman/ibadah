@@ -5,11 +5,11 @@
  * renders a PDF with pdfkit. No AI involvement.
  */
 import PDFDocument from 'pdfkit';
-import type { PdfGenerationOptions, AdminPdfOptions } from '@/modules/report/report.types';
-import { statsService } from '@/modules/stats/stats.service';
-import { userService } from '@/modules/user/user.service';
-import { adminAnalyticsService } from '@/modules/admin/analytics.service';
-import { formatDayKey } from '@/utils/date';
+import type { PdfGenerationOptions, AdminPdfOptions } from './report.types.js';
+import { statsService } from '../stats/stats.service.js';
+import { userService } from '../user/user.service.js';
+import { adminAnalyticsService } from '../admin/analytics.service.js';
+import { formatDayKey } from '../../utils/date.js';
 
 export class ReportService {
   /**

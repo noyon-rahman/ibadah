@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { releaseController } from '@/modules/release/release.controller';
+import { releaseController } from './release.controller.js';
 
 export const releaseRouter = Router();
 

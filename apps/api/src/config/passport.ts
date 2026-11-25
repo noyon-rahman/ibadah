@@ -5,9 +5,9 @@ import {
   type VerifyCallback,
 } from 'passport-google-oauth20';
 
-import { env } from '@/config/env';
-import { authService } from '@/modules/auth/auth.service';
-import { logger } from '@/utils/logger';
+import { env } from './env.js';
+import { authService } from '../modules/auth/auth.service.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Centralised Passport setup for Ibadah.

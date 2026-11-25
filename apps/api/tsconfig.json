@@ -5,10 +5,6 @@
     "rootDir": "./src",
     "declaration": false,
     "removeComments": false,
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"]
-    },
     // Make package `exports`/`imports` resolution deterministic.
     //
     // `helmet` and `express-rate-limit` ship dual CJS/ESM declarations
@@ -16,7 +12,7 @@
     // their `exports` map. Under the inherited `moduleResolution: "Bundler"`,
     // TypeScript picks a declaration from the `import` condition, and which
     // file that lands on depends on how node_modules is laid out (pnpm's
-    // symlinked virtual store here vs. Vercel's install). When it lands on
+    // symlinked virtual store locally vs. Vercel's install). When it lands on
     // the CJS declaration the default import is typed as
     // `typeof import(...)`, which is not callable and fails the build with:
     //
@@ -30,9 +26,5 @@
     "customConditions": ["import", "types", "node"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"],
-  "tsc-alias": {
-    "resolveFullPaths": true,
-    "verbose": false
-  }
+  "exclude": ["node_modules", "dist"]
 }

@@ -4,19 +4,19 @@
  */
 import type { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { getAiConfig, AiConfigError } from '@/modules/ai/ai.config';
-import { createProvider } from '@/modules/ai/providers/index';
-import { getSystemPrompt } from '@/modules/ai/system-prompts';
-import { runAgent } from '@/modules/ai/agent.service';
-import { toolRegistry } from '@/modules/ai/tools/tool-registry';
-import { ChatSessionService } from '@/modules/ai/chat/chat-session.service';
-import type { ChatMessage, SystemSurface } from '@/modules/ai/ai.types';
-import type { ToolContext } from '@/modules/ai/tools/ai-tools.types';
+import { getAiConfig, AiConfigError } from './ai.config.js';
+import { createProvider } from './providers/index.js';
+import { getSystemPrompt } from './system-prompts.js';
+import { runAgent } from './agent.service.js';
+import { toolRegistry } from './tools/tool-registry.js';
+import { ChatSessionService } from './chat/chat-session.service.js';
+import type { ChatMessage, SystemSurface } from './ai.types.js';
+import type { ToolContext } from './tools/ai-tools.types.js';
 import {
   clientChatSchema,
   adminChatSchema,
   guestChatSchema,
-} from '@/modules/ai/ai.validation';
+} from './ai.validation.js';
 
 type ChatRole = 'user' | 'admin';
 

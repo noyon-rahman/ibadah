@@ -3,7 +3,7 @@ import type {
   IRecruiterIntroConfig,
   ISiteConfigDocument,
   ISiteConfigModel,
-} from '@/modules/site-config/site-config.interface';
+} from './site-config.interface.js';
 
 const recruiterIntroSchema = new Schema<IRecruiterIntroConfig>(
   {

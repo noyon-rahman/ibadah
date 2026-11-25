@@ -5,8 +5,8 @@
  * All configuration is persisted to the database and cached for performance.
  */
 
-import type { DiscoveredModel, ProviderName } from '@/modules/ai/ai.types';
-import { AIConfig, type IAIConfig, type IAIConfigDocument, type IProviderConfig } from '@/modules/ai/ai-config.model';
+import type { DiscoveredModel, ProviderName } from './ai.types.js';
+import { AIConfig, type IAIConfig, type IAIConfigDocument, type IProviderConfig } from './ai-config.model.js';
 
 // Configuration Types
 
@@ -283,7 +283,7 @@ class AIConfigService {
 
     try {
       // Import the provider dynamically
-      const { createProvider } = await import('@/modules/ai/providers/index');
+      const { createProvider } = await import('./providers/index.js');
 
       const stored = await this.getProviderWithKey(providerName);
 
@@ -436,7 +436,7 @@ class AIConfigService {
     // Only the custom provider can be discovered without a saved key, because
     // the admin types the key in the same form.
     if (apiKey) {
-      const { createProvider } = await import('@/modules/ai/providers/index');
+      const { createProvider } = await import('./providers/index.js');
       const provider = createProvider({
         provider: providerName,
         apiKey,

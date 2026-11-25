@@ -1,7 +1,7 @@
 import type { CookieOptions, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-import { env } from '@/config/env';
+import { env } from '../config/env.js';
 
 /**
  * Cookie-based delivery of the JWT pair for the web (browser) auth flow.

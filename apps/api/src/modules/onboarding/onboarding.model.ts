@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 import type {
   IOnboardingSubmissionDocument,
   IOnboardingSubmissionModel,
-} from '@/modules/onboarding/onboarding.interface';
+} from './onboarding.interface.js';
 
 const onboardingSubmissionSchema = new Schema<
   IOnboardingSubmissionDocument,

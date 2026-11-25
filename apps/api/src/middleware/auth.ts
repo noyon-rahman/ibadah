@@ -1,10 +1,10 @@
 import type { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { ApiError } from '@/utils/ApiError';
-import { verifyAccessToken } from '@/utils/token';
-import { readAccessCookie } from '@/utils/cookies';
-import { User } from '@/modules/user/user.model';
-import type { UserRole } from '@/modules/user/user.interface';
+import { ApiError } from '../utils/ApiError.js';
+import { verifyAccessToken } from '../utils/token.js';
+import { readAccessCookie } from '../utils/cookies.js';
+import { User } from '../modules/user/user.model.js';
+import type { UserRole } from '../modules/user/user.interface.js';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace

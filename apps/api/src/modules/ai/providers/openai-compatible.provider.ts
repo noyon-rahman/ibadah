@@ -19,7 +19,7 @@ import type {
   StreamChatOptions,
   StreamCompletionOptions,
   ToolSpec,
-} from '@/modules/ai/ai.types';
+} from '../ai.types.js';
 
 /** Map our internal message shape onto the OpenAI Chat Completions shape. */
 function toOpenAiMessages(messages: ChatMessage[]): ChatCompletionMessageParam[] {

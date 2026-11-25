@@ -21,9 +21,9 @@
  */
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import { AiController } from '@/modules/ai/ai.controller';
-import { ChatSessionController } from '@/modules/ai/chat/chat-session.controller';
-import { requireAuth, requireAdmin } from '@/middleware/auth';
+import { AiController } from './ai.controller.js';
+import { ChatSessionController } from './chat/chat-session.controller.js';
+import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 
 const controller = new AiController();
 const sessionController = new ChatSessionController();

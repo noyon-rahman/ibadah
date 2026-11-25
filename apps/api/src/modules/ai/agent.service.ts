@@ -10,14 +10,14 @@
  * The provider only ever does a single streamed turn; all of the loop
  * state lives here so every provider behaves identically.
  */
-import { toolExecutor } from '@/modules/ai/tools/tool-executor';
+import { toolExecutor } from './tools/tool-executor.js';
 import type {
   AiProvider,
   ChatMessage,
   ProviderToolCall,
   ToolSpec,
-} from '@/modules/ai/ai.types';
-import type { ToolContext } from '@/modules/ai/tools/ai-tools.types';
+} from './ai.types.js';
+import type { ToolContext } from './tools/ai-tools.types.js';
 
 export type AgentEvent =
   | { type: 'delta'; text: string }

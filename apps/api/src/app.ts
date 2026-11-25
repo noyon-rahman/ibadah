@@ -7,12 +7,12 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import { StatusCodes } from 'http-status-codes';
 
-import { env } from '@/config/env';
-import { configurePassport } from '@/config/passport';
-import { requestShield } from '@/middleware/requestShield';
-import { errorHandler } from '@/middleware/error';
-import { notFound } from '@/middleware/notFound';
-import { apiRouter } from '@/routes/index';
+import { env } from './config/env.js';
+import { configurePassport } from './config/passport.js';
+import { requestShield } from './middleware/requestShield.js';
+import { errorHandler } from './middleware/error.js';
+import { notFound } from './middleware/notFound.js';
+import { apiRouter } from './routes/index.js';
 
 export function createApp(): Application {
   const app = express();

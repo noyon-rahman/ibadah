@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { catchAsync } from '@/utils/catchAsync';
-import { sendResponse } from '@/utils/sendResponse';
-import { releaseService } from '@/modules/release/release.service';
+import { catchAsync } from '../../utils/catchAsync.js';
+import { sendResponse } from '../../utils/sendResponse.js';
+import { releaseService } from './release.service.js';
 
 export const releaseController = {
   list: catchAsync(async (req, res) => {

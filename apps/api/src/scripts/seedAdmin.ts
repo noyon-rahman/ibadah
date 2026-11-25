@@ -18,9 +18,9 @@ import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 
-import { env } from '@/config/env';
-import { connectDatabase, disconnectDatabase } from '@/config/db';
-import { User } from '@/modules/user/user.model';
+import { env } from '../config/env.js';
+import { connectDatabase, disconnectDatabase } from '../config/db.js';
+import { User } from '../modules/user/user.model.js';
 
 interface SeedInput {
   email: string;

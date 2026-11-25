@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { requireAuth } from '@/middleware/auth';
-import { validate } from '@/middleware/validate';
-import { habitController } from '@/modules/habit/habit.controller';
+import { requireAuth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { habitController } from './habit.controller.js';
 import {
   createHabitSchema,
   getHabitDaySchema,
   idParamSchema,
   updateHabitSchema,
   upsertHabitDaySchema,
-} from '@/modules/habit/habit.validation';
+} from './habit.validation.js';
 
 export const habitRouter = Router();
 habitRouter.use(requireAuth);

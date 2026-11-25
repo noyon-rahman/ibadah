@@ -1,10 +1,10 @@
 import { Types } from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 
-import { ApiError } from '@/utils/ApiError';
-import { toDayKey } from '@/utils/date';
-import { Habit, HabitDay } from '@/modules/habit/habit.model';
-import type { IHabitDayEntry } from '@/modules/habit/habit.interface';
+import { ApiError } from '../../utils/ApiError.js';
+import { toDayKey } from '../../utils/date.js';
+import { Habit, HabitDay } from './habit.model.js';
+import type { IHabitDayEntry } from './habit.interface.js';
 
 export const habitService = {
   // --- Habit definitions ---

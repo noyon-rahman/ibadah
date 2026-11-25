@@ -1,5 +1,5 @@
 import type { Document, Model, Types } from 'mongoose';
-import type { PrayerName, PrayerStatus } from '@/modules/salah/salah.constants';
+import type { PrayerName, PrayerStatus } from './salah.constants.js';
 
 /** The Fard portion of a waqt prayer. Has a timing status. */
 export interface IFardEntry {

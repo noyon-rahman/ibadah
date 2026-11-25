@@ -1,4 +1,4 @@
 /**
  * Re-export requireAdmin for convenience
  */
-export { requireAdmin } from '@/middleware/auth';
+export { requireAdmin } from './auth.js';

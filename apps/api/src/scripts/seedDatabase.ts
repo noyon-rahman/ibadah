@@ -14,27 +14,27 @@ import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import { faker } from '@faker-js/faker';
 
-import { env } from '@/config/env';
-import { connectDatabase, disconnectDatabase } from '@/config/db';
-import { User } from '@/modules/user/user.model';
-import { AIConfig } from '@/modules/ai/ai-config.model';
-import { SiteConfig } from '@/modules/site-config/site-config.model';
-import { ChatSession } from '@/modules/ai/chat/chat-session.model';
-import { ChatMessage } from '@/modules/ai/chat/chat-message.model';
-import { SalahDay } from '@/modules/salah/salah.model';
-import { QuranDay } from '@/modules/quran/quran.model';
-import { DhikrDay } from '@/modules/dhikr/dhikr.model';
-import { Habit, HabitDay } from '@/modules/habit/habit.model';
-import { ChecklistDay } from '@/modules/checklist/checklist.model';
-import { AuditEvent } from '@/modules/audit/audit.model';
-import { ModerationFlag } from '@/modules/moderation/moderation.model';
+import { env } from '../config/env.js';
+import { connectDatabase, disconnectDatabase } from '../config/db.js';
+import { User } from '../modules/user/user.model.js';
+import { AIConfig } from '../modules/ai/ai-config.model.js';
+import { SiteConfig } from '../modules/site-config/site-config.model.js';
+import { ChatSession } from '../modules/ai/chat/chat-session.model.js';
+import { ChatMessage } from '../modules/ai/chat/chat-message.model.js';
+import { SalahDay } from '../modules/salah/salah.model.js';
+import { QuranDay } from '../modules/quran/quran.model.js';
+import { DhikrDay } from '../modules/dhikr/dhikr.model.js';
+import { Habit, HabitDay } from '../modules/habit/habit.model.js';
+import { ChecklistDay } from '../modules/checklist/checklist.model.js';
+import { AuditEvent } from '../modules/audit/audit.model.js';
+import { ModerationFlag } from '../modules/moderation/moderation.model.js';
 import {
   PRAYER_NAMES,
   SALAH_DEFAULT_POINTS,
   type PrayerStatus,
-} from '@/modules/salah/salah.constants';
-import { DEFAULT_DHIKR_PRESETS } from '@/modules/dhikr/dhikr.constants';
-import type { AuditAction } from '@/modules/audit/audit.interface';
+} from '../modules/salah/salah.constants.js';
+import { DEFAULT_DHIKR_PRESETS } from '../modules/dhikr/dhikr.constants.js';
+import type { AuditAction } from '../modules/audit/audit.interface.js';
 
 // Seed configuration
 const SEED_CONFIG = {

@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { requireAuth } from '@/middleware/auth';
-import { validate } from '@/middleware/validate';
-import { checklistController } from '@/modules/checklist/checklist.controller';
-import { getChecklistDaySchema, upsertChecklistDaySchema } from '@/modules/checklist/checklist.validation';
+import { requireAuth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { checklistController } from './checklist.controller.js';
+import { getChecklistDaySchema, upsertChecklistDaySchema } from './checklist.validation.js';
 
 export const checklistRouter = Router();
 checklistRouter.use(requireAuth);

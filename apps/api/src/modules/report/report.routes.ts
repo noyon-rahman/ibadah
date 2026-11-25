@@ -5,8 +5,8 @@
  *   - adminReportRouter  →  /reports/admin/*   (admins only)
  */
 import { Router } from 'express';
-import { ReportController } from '@/modules/report/report.controller';
-import { requireAuth, requireAdmin } from '@/middleware/auth';
+import { ReportController } from './report.controller.js';
+import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 
 const controller = new ReportController();
 

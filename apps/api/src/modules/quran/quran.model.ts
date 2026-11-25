@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import type { IQuranDayDocument, IQuranDayModel } from '@/modules/quran/quran.interface';
+import type { IQuranDayDocument, IQuranDayModel } from './quran.interface.js';
 
 const quranDaySchema = new Schema<IQuranDayDocument, IQuranDayModel>(
   {

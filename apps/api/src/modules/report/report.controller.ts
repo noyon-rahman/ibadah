@@ -3,8 +3,8 @@
  */
 import type { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { ReportService } from '@/modules/report/report.service';
-import { userReportSchema, adminReportSchema } from '@/modules/report/report.validation';
+import { ReportService } from './report.service.js';
+import { userReportSchema, adminReportSchema } from './report.validation.js';
 
 export class ReportController {
   private reportService: ReportService;

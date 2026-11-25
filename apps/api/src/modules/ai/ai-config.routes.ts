@@ -6,8 +6,8 @@
  */
 
 import { Router } from 'express';
-import { aiConfigController } from '@/modules/ai/ai-config.controller';
-import { requireAuth, requireAdmin } from '@/middleware/auth';
+import { aiConfigController } from './ai-config.controller.js';
+import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 
 const router = Router();
 
