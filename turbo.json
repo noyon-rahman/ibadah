@@ -6,7 +6,31 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": [
+        "PORT",
+        "API_PREFIX",
+        "SERVER_URL",
+        "MONGODB_URI",
+        "JWT_ACCESS_SECRET",
+        "JWT_ACCESS_EXPIRES_IN",
+        "JWT_REFRESH_SECRET",
+        "JWT_REFRESH_EXPIRES_IN",
+        "BCRYPT_SALT_ROUNDS",
+        "CLIENT_URL",
+        "CORS_SUPPORT_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "GOOGLE_CALLBACK_URL",
+        "CLIENT_OAUTH_CALLBACK_PATH",
+        "COOKIE_DOMAIN",
+        "COOKIE_SECURE",
+        "COOKIE_SAME_SITE",
+        "ADMIN_EMAIL",
+        "ADMIN_PASSWORD",
+        "ADMIN_NAME",
+        "ADMIN_FORCE_PASSWORD_RESET"
+      ]
     },
     "dev": {
       "dependsOn": ["^build"],

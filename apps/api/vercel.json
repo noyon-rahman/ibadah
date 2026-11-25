@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "express",
+  "buildCommand": "pnpm generate:changelog",
+  "rewrites": [{ "source": "/(.*)", "destination": "/src/index.ts" }]
+}
