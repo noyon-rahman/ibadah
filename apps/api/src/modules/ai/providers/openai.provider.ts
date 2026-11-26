@@ -2,7 +2,7 @@
  * OpenAI provider implementation (native function calling via the
  * shared OpenAI-compatible base).
  */
-import OpenAI from 'openai';
+import { OpenAI } from 'openai';
 import { OpenAiCompatibleProvider } from './openai-compatible.provider.js';
 
 export class OpenAiProvider extends OpenAiCompatibleProvider {

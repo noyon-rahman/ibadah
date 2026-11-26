@@ -2,7 +2,7 @@
  * OpenRouter provider implementation (OpenAI-compatible API with native
  * function calling). Adds OpenRouter's attribution headers.
  */
-import OpenAI from 'openai';
+import { OpenAI } from 'openai';
 import { OpenAiCompatibleProvider } from './openai-compatible.provider.js';
 
 export class OpenRouterProvider extends OpenAiCompatibleProvider {

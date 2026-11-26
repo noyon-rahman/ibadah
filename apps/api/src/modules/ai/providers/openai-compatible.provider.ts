@@ -5,7 +5,7 @@
  * function/tool calling, so the message translation and streaming
  * tool-call accumulation live here once.
  */
-import type OpenAI from 'openai';
+import type { OpenAI } from 'openai';
 import type {
   ChatCompletionMessageParam,
   ChatCompletionTool,
