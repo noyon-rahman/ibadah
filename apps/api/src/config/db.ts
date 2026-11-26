@@ -1,7 +1,8 @@
-// Named import: under Vercel's CJS-mode resolution the CJS default export can
-// be typed as the module namespace, so avoid `mongoose.connection` (namespace
-// member access) on the default binding.
-import mongoose, { connection } from 'mongoose';
+// Default import only: `mongoose` is a CJS `export =` package, and Node's ESM
+// loader provides only its default binding. A namespace import would be typed
+// as non-callable by Vercel's CJS-mode resolver (TS2349 on `mongoose.connect`),
+// so the default binding — the one form both agree on — is used throughout.
+import mongoose from 'mongoose';
 import { env } from './env.js';
 import { logger } from '../utils/logger.js';
 
@@ -12,17 +13,17 @@ export async function connectDatabase(): Promise<void> {
     await mongoose.connect(env.MONGODB_URI, {
       autoIndex: env.NODE_ENV !== 'production',
     });
-    logger.info(`🗄️ MongoDB connected - db:${connection.name}`);
+    logger.info(`🗄️ MongoDB connected - db:${mongoose.connection.name}`);
   } catch (err) {
     logger.error('MongoDB connection failed', err);
     throw err;
   }
 
-  connection.on('disconnected', () => {
+  mongoose.connection.on('disconnected', () => {
     logger.warn('MongoDB disconnected');
   });
 
-  connection.on('error', (err) => {
+  mongoose.connection.on('error', (err) => {
     logger.error('MongoDB error', err);
   });
 }

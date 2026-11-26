@@ -1,6 +1,7 @@
-// Named imports plus `connection` for reads, so nothing depends on how a
-// CJS `export =` default is typed by the resolver.
-import mongoose, { connection, Types } from 'mongoose';
+// `mongoose` is a CJS `export =` package: its default binding is what Node's
+// ESM loader provides, and the named bindings are what Vercel's resolver can
+// type. Import both, and read `connection` off the default.
+import mongoose, { Types } from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 
 import { ApiError } from '../../utils/ApiError.js';
@@ -534,7 +535,7 @@ async function extendedHealth(): Promise<ExtendedHealth> {
     2: 'connecting',
     3: 'disconnected',
   };
-  const conn = connection;
+  const conn = mongoose.connection;
   const dbState = stateMap[conn.readyState] ?? 'unknown';
 
   let latencyMs: number | null = null;

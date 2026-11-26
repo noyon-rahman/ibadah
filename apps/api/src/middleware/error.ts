@@ -3,8 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 import { ZodError } from 'zod';
 // Named imports: `mongoose` is a CJS `export =` package, so Vercel's CJS-mode
 // resolver types its default export as the module namespace. `mongoose.Error`
-// and `mongoose.connection` then stop being usable as a value/type.
-import mongoose, { Error as MongooseError } from 'mongoose';
+// then stops being usable as a value/type.
+import { Error as MongooseError } from 'mongoose';
 import { ApiError } from '../utils/ApiError.js';
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';

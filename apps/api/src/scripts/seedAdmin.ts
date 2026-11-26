@@ -16,10 +16,9 @@
  */
 import 'dotenv/config';
 import { hash } from 'bcryptjs';
-// Named imports: this module is reached from the serverless entry through
-// `config/db.ts`, and `mongoose.connection` stops being usable as a value when
-// the CJS default export is typed as the module namespace.
-import { connection } from 'mongoose';
+// `mongoose` is a CJS `export =` package; `connection` is read off its default
+// binding, which is the only form Node's ESM loader can resolve here.
+import mongoose from 'mongoose';
 
 import { env } from '../config/env.js';
 import { connectDatabase, disconnectDatabase } from '../config/db.js';
@@ -108,6 +107,6 @@ run()
   })
   .catch(async (err) => {
     console.error('❌ Seed failed:', err instanceof Error ? err.message : err);
-    if (connection.readyState !== 0) await disconnectDatabase().catch(() => undefined);
+    if (mongoose.connection.readyState !== 0) await disconnectDatabase().catch(() => undefined);
     process.exit(1);
   });

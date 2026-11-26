@@ -14,7 +14,9 @@
  * Safe to run repeatedly: only days that still hold a pending Fard are touched.
  */
 import 'dotenv/config';
-import { connection } from 'mongoose';
+// `mongoose` is a CJS `export =` package; `connection` is read off its default
+// binding, which is the only form Node's ESM loader can resolve here.
+import mongoose from 'mongoose';
 
 import { connectDatabase, disconnectDatabase } from '../config/db.js';
 import { salahService } from '../modules/salah/salah.service.js';
@@ -32,7 +34,7 @@ run()
   })
   .catch(async (err) => {
     console.error('❌ Backfill failed:', err instanceof Error ? err.message : err);
-    if (connection.readyState !== 0) {
+    if (mongoose.connection.readyState !== 0) {
       await disconnectDatabase().catch(() => undefined);
     }
     process.exit(1);

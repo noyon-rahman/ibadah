@@ -12,9 +12,8 @@ import 'dotenv/config';
 import { pathToFileURL } from 'node:url';
 import { hash } from 'bcryptjs';
 // Named imports for both values and types: the default export of this CJS
-// `export =` package is typed as the module namespace by Vercel's resolver,
-// which makes `Types.ObjectId` (value and type) unusable.
-import mongoose, { type Model, Types } from 'mongoose';
+// `export =` package is typed as the module namespace by Vercel's resolver.
+import { type Model, Types } from 'mongoose';
 import { faker } from '@faker-js/faker';
 
 import { env } from '../config/env.js';
