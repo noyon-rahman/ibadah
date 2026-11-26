@@ -20,9 +20,9 @@ interface DayPoints {
  * defaults, so a row from any of these collections always has them.
  */
 interface DailyPointRow {
-  date: Date;
-  totalPoints?: number | null;
-  pagesRead?: number | null;
+  date: unknown;
+  totalPoints?: unknown;
+  pagesRead?: unknown;
 }
 
 /**
@@ -31,9 +31,34 @@ interface DailyPointRow {
  * This is the boundary where the loosely-typed Mongoose result stops and
  * typed application data begins — see the comment in `dailyPoints` for why
  * the result is not trusted to be typed here.
+ *
+ * `unknown` is the widest parameter type on purpose: a caller passing a
+ * loosely-typed Mongoose result does not have to satisfy any constraint.
  */
 function asPointRows(rows: unknown): DailyPointRow[] {
   return (rows ?? []) as DailyPointRow[];
+}
+
+/**
+ * The `date` of a daily row as a `YYYY-MM-DD` key.
+ *
+ * `.lean()` returns the stored `Date`, but the declared type of that field is
+ * not something this module can rely on across environments, so the value is
+ * checked here and the function is typed to return `string`. Every caller then
+ * receives a real `string` no matter how the row was typed.
+ */
+function rowDayKey(value: unknown): string {
+  return formatDayKey(toDayKey(value as string | Date));
+}
+
+/**
+ * A counter field of a daily row as a real `number` (`0` when absent).
+ *
+ * Same reasoning as `rowDayKey`: typed to return `number` so callers cannot
+ * end up holding `unknown` if the row's field type resolves loosely.
+ */
+function rowNumber(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
 }
 
 export const statsService = {
@@ -75,24 +100,36 @@ export const statsService = {
     const checklist = asPointRows(checklistRows);
     const quran = asPointRows(quranRows);
 
+    const newPoint = (key: string): DayPoints => ({
+      date: key,
+      salah: 0,
+      habit: 0,
+      checklist: 0,
+      quranPages: 0,
+      total: 0,
+    });
+
     const map = new Map<string, DayPoints>();
-    const ensure = (d: Date): DayPoints => {
-      const key = formatDayKey(d);
-      if (!map.has(key)) {
-        map.set(key, { date: key, salah: 0, habit: 0, checklist: 0, quranPages: 0, total: 0 });
-      }
-      return map.get(key)!;
+    const ensure = (d: unknown): DayPoints => {
+      const key = rowDayKey(d);
+      const existing = map.get(key);
+      if (existing) return existing;
+      const created = newPoint(key);
+      map.set(key, created);
+      return created;
     };
 
-    for (const s of salah) ensure(s.date).salah = s.totalPoints ?? 0;
-    for (const h of habit) ensure(h.date).habit = h.totalPoints ?? 0;
-    for (const c of checklist) ensure(c.date).checklist = c.totalPoints ?? 0;
-    for (const q of quran) ensure(q.date).quranPages = q.pagesRead ?? 0;
+    for (const s of salah) ensure(s.date).salah = rowNumber(s.totalPoints);
+    for (const h of habit) ensure(h.date).habit = rowNumber(h.totalPoints);
+    for (const c of checklist) ensure(c.date).checklist = rowNumber(c.totalPoints);
+    for (const q of quran) ensure(q.date).quranPages = rowNumber(q.pagesRead);
 
-    const out: DayPoints[] = Array.from(map.values()).map((d: DayPoints) => ({
-      ...d,
-      total: d.salah + d.habit + d.checklist,
-    }));
+    const out: DayPoints[] = [];
+    const stored: DayPoints[] = [];
+    for (const value of map.values()) stored.push(value);
+    for (const d of stored) {
+      out.push({ ...d, total: d.salah + d.habit + d.checklist });
+    }
     out.sort((a, b) => a.date.localeCompare(b.date));
     return out;
   },
@@ -113,9 +150,11 @@ export const statsService = {
       formatDayKey(todayKey),
     );
 
-    const activeDays = new Set(
-      points.filter((p: DayPoints) => p.total > 0).map((p: DayPoints) => p.date),
-    );
+    const activeDays = new Set<string>();
+    for (let i = 0; i < points.length; i += 1) {
+      const point: DayPoints = points[i];
+      if (point.total > 0) activeDays.add(point.date);
+    }
 
     // current streak (counting backwards from today)
     let current = 0;
@@ -128,7 +167,9 @@ export const statsService = {
     // longest streak in window
     let longest = 0;
     let run = 0;
-    const sorted: string[] = Array.from(activeDays).sort();
+    const sorted: string[] = [];
+    for (const day of activeDays) sorted.push(day);
+    sorted.sort();
     let prev: Date | null = null;
     for (const day of sorted) {
       const d = toDayKey(day);
