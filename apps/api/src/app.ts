@@ -16,6 +16,9 @@ import { requestShield } from './middleware/requestShield.js';
 import { errorHandler } from './middleware/error.js';
 import { notFound } from './middleware/notFound.js';
 import { apiRouter } from './routes/index.js';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+
+import { handleRequest } from './serverless.js';
 
 export function createApp(): Application {
   const app = express();
@@ -70,4 +73,27 @@ export function createApp(): Application {
   app.use(errorHandler);
 
   return app;
+}
+
+/**
+ * Vercel Function entry.
+ *
+ * `app.ts` is the file Vercel's Express builder looks for — it is the only
+ * candidate whose import graph contains `express`, so it must stay named this
+ * way. (Renaming it to `create-app.ts` produced "No entrypoint found which
+ * imports express", and the alternative candidate, `server.ts`, calls
+ * `app.listen()` and is wrong for serverless.)
+ *
+ * The builder also requires the module's **default export** to be a handler
+ * function or a server. `createApp` alone is neither, which previously failed
+ * at runtime with "Invalid export found in module .../src/app.js". The default
+ * export below is the lazily-initialised request handler: it connects Mongo
+ * once per cold start and then serves through the same Express app used by the
+ * long-running server in `server.ts`.
+ */
+export default async function handler(
+  req: IncomingMessage,
+  res: ServerResponse,
+): Promise<void> {
+  await handleRequest(req, res);
 }

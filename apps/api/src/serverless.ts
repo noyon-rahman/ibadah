@@ -1,13 +1,12 @@
 /**
  * Shared serverless lifecycle for the API.
  *
- * Used by the Vercel Function entry (`src/index.ts`). Keeping it in one place
+ * Used by the Vercel Function entry in `src/app.ts`. Keeping it in one place
  * means the connection handling cannot drift between entry points.
  *
- * The Express app lives in `src/create-app.ts`, deliberately *not* `app.ts`:
- * Vercel's entry auto-detection looks for `src/index.*`, `src/app.*` and
- * `src/server.*`, and `app.*` only exports a factory, so detecting it failed
- * at runtime with "Invalid export found in module .../src/app.js".
+ * `app.ts` (not `index.ts`) is the entry because Vercel's Express builder picks
+ * the candidate whose import graph contains `express`; the handler is exported
+ * as that module's default so it satisfies the runtime's default-export rule.
  *
  * Responsibilities:
  *   - Connect to MongoDB once per cold start and reuse the pool across warm
@@ -20,7 +19,7 @@
 import type { Application } from 'express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-import { createApp } from './create-app.js';
+import { createApp } from './app.js';
 import { connectDatabase } from './config/db.js';
 import { releaseService } from './modules/release/release.service.js';
 import { logger } from './utils/logger.js';
