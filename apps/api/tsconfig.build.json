@@ -1,0 +1,34 @@
+{
+  // Build config: used by `pnpm build` (and therefore by Vercel).
+  //
+  // The base `tsconfig.json` is for the editor and `pnpm typecheck`, and it
+  // type-checks every file under `src` with the inherited
+  // `moduleResolution: "Bundler"`.
+  //
+  // Vercel type-checks the Function's entry graph in *its own* environment —
+  // a different TypeScript install and node_modules layout from ours — so a
+  // check that passes locally can still fail there. It has, twice:
+  //
+  //   error TS2349: This expression is not callable.
+  //     Type 'typeof import(".../helmet/index")' has no call signatures.
+  //   src/modules/stats/stats.service.ts(80,47): error TS7006:
+  //     Parameter 'p' implicitly has an 'any' type.
+  //
+  // Both were dependency-typing resolution, not a bug in those files: under
+  // `Bundler`, TypeScript asks for a package's `exports` `import` condition
+  // and picks up dual CJS/ESM declarations, or falls back to `main` and can
+  // land on JavaScript with no types at all. `NodeNext` is the one setting
+  // that resolves packages the way Node actually loads them, so the Function
+  // build uses it and pins every dependency to its `types` entry.
+  //
+  // Extensionless `.js` specifiers (see `src/modules/ai/ai.types.ts`) are only
+  // valid under `NodeNext`, so this config type-checks exactly the code that
+  // runs there.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

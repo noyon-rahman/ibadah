@@ -25,6 +25,10 @@
     "resolvePackageJsonImports": true,
     "customConditions": ["import", "types", "node"]
   },
+  // This file configures the editor and `pnpm typecheck` only: it type-checks
+  // every module, including the CLI seed/backfill scripts. `pnpm build`
+  // compiles through `tsconfig.build.json`, which narrows what Vercel
+  // type-checks for the serverless Function (see that file's comments).
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

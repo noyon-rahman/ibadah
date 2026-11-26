@@ -62,6 +62,16 @@ its watch build — otherwise consumers see stale types.
 - **Vercel entry:** `src/index.ts` re-exports the default handler from `src/serverless.ts`
   (connect Mongo once per cold start, seed releases, never `app.listen`). `src/server.ts`
   remains the long-running/Docker entry.
+- **Two tsconfigs.** `tsconfig.json` is for the editor and `pnpm typecheck`.
+  `tsconfig.build.json` is what `pnpm build` (and so Vercel) compiles with; it
+  differs only in `module`/`moduleResolution: "NodeNext"`. Vercel type-checks the
+  Function's entry graph in its own environment (different TypeScript and
+  node_modules layout), so checks that pass locally can still fail the deploy —
+  that has happened twice, as TS2349 on `helmet`/`express-rate-limit` and TS7006
+  in `stats.service.ts`, both dependency-typing resolution rather than real bugs.
+  `NodeNext` resolves packages the way Node loads them, so every dependency gets
+  its `types` entry. Don't switch the build back to `Bundler`, and don't add
+  `.js`-less extensionless specifiers outside what `NodeNext` accepts.
 - **Config is validated at startup** in [env.ts](apps/api/src/config/env.ts) (Zod, exits on
   failure). Add new server env vars there and to `.env.example`, not via ad-hoc
   `process.env` reads (the only exceptions are the seed scripts).

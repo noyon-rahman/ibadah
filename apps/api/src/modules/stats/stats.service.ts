@@ -77,7 +77,9 @@ export const statsService = {
       formatDayKey(todayKey),
     );
 
-    const activeDays = new Set(points.filter((p) => p.total > 0).map((p) => p.date));
+    const activeDays = new Set(
+      points.filter((p: DayPoints) => p.total > 0).map((p: DayPoints) => p.date),
+    );
 
     // current streak (counting backwards from today)
     let current = 0;
