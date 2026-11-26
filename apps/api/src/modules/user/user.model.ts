@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import bcrypt from 'bcryptjs';
+import { compare } from 'bcryptjs';
 import type { IUserDocument, IUserModel, SafeUser } from './user.interface.js';
 
 const checklistTemplateItemSchema = new Schema(
@@ -62,7 +62,7 @@ const userSchema = new Schema<IUserDocument, IUserModel>(
 
 userSchema.methods.comparePassword = function (plain: string): Promise<boolean> {
   if (!this.passwordHash) return Promise.resolve(false);
-  return bcrypt.compare(plain, this.passwordHash);
+  return compare(plain, this.passwordHash);
 };
 
 userSchema.methods.toSafeJSON = function (): SafeUser {

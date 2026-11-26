@@ -14,7 +14,7 @@
  * Safe to run repeatedly: only days that still hold a pending Fard are touched.
  */
 import 'dotenv/config';
-import mongoose from 'mongoose';
+import { connection } from 'mongoose';
 
 import { connectDatabase, disconnectDatabase } from '../config/db.js';
 import { salahService } from '../modules/salah/salah.service.js';
@@ -32,7 +32,7 @@ run()
   })
   .catch(async (err) => {
     console.error('❌ Backfill failed:', err instanceof Error ? err.message : err);
-    if (mongoose.connection.readyState !== 0) {
+    if (connection.readyState !== 0) {
       await disconnectDatabase().catch(() => undefined);
     }
     process.exit(1);

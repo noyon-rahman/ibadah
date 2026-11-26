@@ -1,3 +1,6 @@
+// Default import kept: `passport` is a single-object `export =` module, the one
+// CJS shape whose default interop resolves the same under either resolver.
+// (Named imports from it would fail: `@types/passport` is export-equals.)
 import passport from 'passport';
 import {
   Strategy as GoogleStrategy,

@@ -1,5 +1,5 @@
 import type { CookieOptions, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import { decode, type JwtPayload } from 'jsonwebtoken';
 
 import { env } from '../config/env.js';
 
@@ -71,10 +71,13 @@ function baseOptions(): CookieOptions {
  * token can't be decoded.
  */
 function maxAgeFromToken(token: string, fallbackMs: number): number {
-  const decoded = jwt.decode(token);
-  if (decoded && typeof decoded === 'object' && typeof decoded.exp === 'number') {
-    const ms = decoded.exp * 1000 - Date.now();
-    if (ms > 0) return ms;
+  const decoded = decode(token);
+  if (decoded && typeof decoded === 'object') {
+    const { exp } = decoded as JwtPayload;
+    if (typeof exp === 'number') {
+      const ms = exp * 1000 - Date.now();
+      if (ms > 0) return ms;
+    }
   }
   return fallbackMs;
 }

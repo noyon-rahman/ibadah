@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import jwt, { type SignOptions } from 'jsonwebtoken';
+import { sign, verify, type SignOptions } from 'jsonwebtoken';
 import { env } from '../config/env.js';
 
 /**
@@ -40,7 +40,7 @@ export function signOAuthState(payload: Omit<OAuthStatePayload, 'nonce'>): strin
     expiresIn: STATE_TTL,
     audience: AUDIENCE,
   };
-  return jwt.sign(
+  return sign(
     { ...payload, nonce: randomBytes(12).toString('hex') },
     env.JWT_ACCESS_SECRET,
     opts,
@@ -48,8 +48,8 @@ export function signOAuthState(payload: Omit<OAuthStatePayload, 'nonce'>): strin
 }
 
 export function verifyOAuthState(state: string): OAuthStatePayload {
-  // jwt.verify will throw on expired / wrong-audience / invalid-signature.
-  const decoded = jwt.verify(state, env.JWT_ACCESS_SECRET, {
+  // verify() throws on expired / wrong-audience / invalid-signature.
+  const decoded = verify(state, env.JWT_ACCESS_SECRET, {
     audience: AUDIENCE,
   }) as OAuthStatePayload & { iat: number; exp: number; aud: string };
   return {

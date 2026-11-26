@@ -4,6 +4,11 @@
  * Pure reporting concern — pulls from the stats/user/analytics services and
  * renders a PDF with pdfkit. No AI involvement.
  */
+// Default import kept: `@types/pdfkit` declares `pdfkit` as a `declare module`
+// whose only export is `export = doc`, and it is not listed in the package's
+// `exports` map — so TS may or may not pick the types up at all, but when it
+// does, the shape is the same single-object `export =` case that the default
+// binding handles under either resolver.
 import PDFDocument from 'pdfkit';
 import type { PdfGenerationOptions, AdminPdfOptions } from './report.types.js';
 import { statsService } from '../stats/stats.service.js';
@@ -110,6 +115,10 @@ export class ReportService {
       doc.on('error', reject);
     });
   }
+
+  // Self-check: pdfkit's typings expose `PDFDocument` as a value with no
+  // matching type name, so there is no static type to verify here. The
+  // constructible value is checked by `new PDFDocument(...)` above.
 
   /**
    * Generate an admin analytics report PDF

@@ -1,4 +1,6 @@
-import bcrypt from 'bcryptjs';
+// Named imports: `bcryptjs` ships CJS-first declarations; the named exports are
+// stable regardless of how the default export is typed by the resolver.
+import { hash, compare } from 'bcryptjs';
 import { StatusCodes } from 'http-status-codes';
 import type { Profile } from 'passport-google-oauth20';
 
@@ -95,7 +97,7 @@ export const authService = {
       throw new ApiError(StatusCodes.CONFLICT, 'An account with this email already exists');
     }
 
-    const passwordHash = await bcrypt.hash(dto.password, env.BCRYPT_SALT_ROUNDS);
+    const passwordHash = await hash(dto.password, env.BCRYPT_SALT_ROUNDS);
     const user = await User.create({
       name: dto.name,
       email: dto.email,

@@ -1,6 +1,9 @@
 import express, { type Application } from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
+// `helmet`'s only declaration file (`index.d.cts`) exports the middleware as
+// a named export (`helmet as default` is just an alias for it), so import the
+// named binding — it survives either resolver.
+import { helmet } from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';

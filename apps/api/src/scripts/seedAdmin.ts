@@ -15,8 +15,11 @@
  * is only consumed in-memory and never logged.
  */
 import 'dotenv/config';
-import bcrypt from 'bcryptjs';
-import mongoose from 'mongoose';
+import { hash } from 'bcryptjs';
+// Named imports: this module is reached from the serverless entry through
+// `config/db.ts`, and `mongoose.connection` stops being usable as a value when
+// the CJS default export is typed as the module namespace.
+import { connection } from 'mongoose';
 
 import { env } from '../config/env.js';
 import { connectDatabase, disconnectDatabase } from '../config/db.js';
@@ -68,7 +71,7 @@ async function run(): Promise<void> {
       changed = true;
     }
     if (input.rotatePassword || !existing.passwordHash) {
-      existing.passwordHash = await bcrypt.hash(input.password, env.BCRYPT_SALT_ROUNDS);
+      existing.passwordHash = await hash(input.password, env.BCRYPT_SALT_ROUNDS);
       changed = true;
     }
 
@@ -82,7 +85,7 @@ async function run(): Promise<void> {
       console.log(`ℹ️  Account ${existing.email} is already an active admin. Nothing to do.`);
     }
   } else {
-    const passwordHash = await bcrypt.hash(input.password, env.BCRYPT_SALT_ROUNDS);
+    const passwordHash = await hash(input.password, env.BCRYPT_SALT_ROUNDS);
     const created = await User.create({
       email: input.email,
       name: input.name,
@@ -105,6 +108,6 @@ run()
   })
   .catch(async (err) => {
     console.error('❌ Seed failed:', err instanceof Error ? err.message : err);
-    if (mongoose.connection.readyState !== 0) await disconnectDatabase().catch(() => undefined);
+    if (connection.readyState !== 0) await disconnectDatabase().catch(() => undefined);
     process.exit(1);
   });

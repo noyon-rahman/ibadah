@@ -1,7 +1,10 @@
 import type { ErrorRequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ZodError } from 'zod';
-import mongoose from 'mongoose';
+// Named imports: `mongoose` is a CJS `export =` package, so Vercel's CJS-mode
+// resolver types its default export as the module namespace. `mongoose.Error`
+// and `mongoose.connection` then stop being usable as a value/type.
+import mongoose, { Error as MongooseError } from 'mongoose';
 import { ApiError } from '../utils/ApiError.js';
 import { env } from '../config/env.js';
 import { logger } from '../utils/logger.js';
@@ -25,7 +28,7 @@ function normalize(err: unknown): NormalizedError {
     };
   }
 
-  if (err instanceof mongoose.Error.ValidationError) {
+  if (err instanceof MongooseError.ValidationError) {
     return {
       statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
       message: 'Validation failed',
@@ -33,7 +36,7 @@ function normalize(err: unknown): NormalizedError {
     };
   }
 
-  if (err instanceof mongoose.Error.CastError) {
+  if (err instanceof MongooseError.CastError) {
     return { statusCode: StatusCodes.BAD_REQUEST, message: `Invalid ${err.path}: ${err.value}` };
   }
 

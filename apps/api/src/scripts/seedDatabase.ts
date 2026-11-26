@@ -10,8 +10,11 @@
  */
 import 'dotenv/config';
 import { pathToFileURL } from 'node:url';
-import bcrypt from 'bcryptjs';
-import mongoose from 'mongoose';
+import { hash } from 'bcryptjs';
+// Named imports for both values and types: the default export of this CJS
+// `export =` package is typed as the module namespace by Vercel's resolver,
+// which makes `Types.ObjectId` (value and type) unusable.
+import mongoose, { type Model, Types } from 'mongoose';
 import { faker } from '@faker-js/faker';
 
 import { env } from '../config/env.js';
@@ -90,7 +93,7 @@ function fardPoints(status: PrayerStatus): number {
 async function clearCollections(): Promise<void> {
   console.log('🗑️  Clearing collections...');
 
-  const collections: mongoose.Model<unknown>[] = [
+  const collections: Model<unknown>[] = [
     User,
     SalahDay,
     QuranDay,
@@ -104,7 +107,7 @@ async function clearCollections(): Promise<void> {
     ModerationFlag,
     AIConfig,
     SiteConfig,
-  ] as unknown as mongoose.Model<unknown>[];
+  ] as unknown as Model<unknown>[];
 
   for (const collection of collections) {
     await collection.deleteMany({});
@@ -232,10 +235,10 @@ async function seedAIConfig(): Promise<void> {
   });
 }
 
-async function seedAdminUser(): Promise<mongoose.Types.ObjectId> {
+async function seedAdminUser(): Promise<Types.ObjectId> {
   console.log('👤 Creating admin user...');
 
-  const passwordHash = await bcrypt.hash(SEED_CONFIG.adminPassword, env.BCRYPT_SALT_ROUNDS);
+  const passwordHash = await hash(SEED_CONFIG.adminPassword, env.BCRYPT_SALT_ROUNDS);
 
   const admin = await User.create({
     email: SEED_CONFIG.adminEmail,
@@ -252,11 +255,11 @@ async function seedAdminUser(): Promise<mongoose.Types.ObjectId> {
   return admin._id;
 }
 
-async function seedDummyUsers(): Promise<mongoose.Types.ObjectId[]> {
+async function seedDummyUsers(): Promise<Types.ObjectId[]> {
   console.log(`👥 Creating ${SEED_CONFIG.userCount} dummy users...`);
 
-  const userIds: mongoose.Types.ObjectId[] = [];
-  const passwordHash = await bcrypt.hash('password123', env.BCRYPT_SALT_ROUNDS);
+  const userIds: Types.ObjectId[] = [];
+  const passwordHash = await hash('password123', env.BCRYPT_SALT_ROUNDS);
 
   // Dedicated demo account for the recruiter pop-up 1-click test drive
   const demoUser = await User.create({
@@ -298,7 +301,7 @@ async function seedDummyUsers(): Promise<mongoose.Types.ObjectId[]> {
   return userIds;
 }
 
-async function seedSalahDays(userIds: mongoose.Types.ObjectId[]): Promise<number> {
+async function seedSalahDays(userIds: Types.ObjectId[]): Promise<number> {
   console.log('🕌 Creating Salah (prayer) day records...');
 
   let count = 0;
@@ -348,7 +351,7 @@ async function seedSalahDays(userIds: mongoose.Types.ObjectId[]): Promise<number
   return count;
 }
 
-async function seedQuranDays(userIds: mongoose.Types.ObjectId[]): Promise<number> {
+async function seedQuranDays(userIds: Types.ObjectId[]): Promise<number> {
   console.log('📖 Creating Quran reading day records...');
 
   let count = 0;
@@ -380,7 +383,7 @@ async function seedQuranDays(userIds: mongoose.Types.ObjectId[]): Promise<number
   return count;
 }
 
-async function seedDhikrDays(userIds: mongoose.Types.ObjectId[]): Promise<number> {
+async function seedDhikrDays(userIds: Types.ObjectId[]): Promise<number> {
   console.log('📿 Creating Dhikr day records...');
 
   let count = 0;
@@ -411,7 +414,7 @@ async function seedDhikrDays(userIds: mongoose.Types.ObjectId[]): Promise<number
 }
 
 async function seedHabits(
-  userIds: mongoose.Types.ObjectId[],
+  userIds: Types.ObjectId[],
 ): Promise<{ habits: number; habitDays: number }> {
   console.log('✨ Creating Habits...');
 
@@ -435,7 +438,7 @@ async function seedHabits(
     const userHabitCount = faker.number.int({ min: 3, max: 7 });
     const templates = faker.helpers.arrayElements(habitTemplates, userHabitCount);
 
-    const habitIds: mongoose.Types.ObjectId[] = [];
+    const habitIds: Types.ObjectId[] = [];
     const habitRewards = new Map<string, number>();
 
     for (const template of templates) {
@@ -479,7 +482,7 @@ async function seedHabits(
   return { habits: habitsCount, habitDays: habitDaysCount };
 }
 
-async function seedChecklistDays(userIds: mongoose.Types.ObjectId[]): Promise<number> {
+async function seedChecklistDays(userIds: Types.ObjectId[]): Promise<number> {
   console.log('✅ Creating Checklist Days...');
 
   let count = 0;
@@ -514,7 +517,7 @@ async function seedChecklistDays(userIds: mongoose.Types.ObjectId[]): Promise<nu
   return count;
 }
 
-async function seedChatSessions(userIds: mongoose.Types.ObjectId[]): Promise<number> {
+async function seedChatSessions(userIds: Types.ObjectId[]): Promise<number> {
   console.log('💬 Creating Chat Sessions...');
 
   let count = 0;
@@ -554,7 +557,7 @@ async function seedChatSessions(userIds: mongoose.Types.ObjectId[]): Promise<num
   return count;
 }
 
-async function seedAuditEvents(adminId: mongoose.Types.ObjectId): Promise<number> {
+async function seedAuditEvents(adminId: Types.ObjectId): Promise<number> {
   console.log('📊 Generating audit events...');
 
   const auditActions: AuditAction[] = [
@@ -576,7 +579,7 @@ async function seedAuditEvents(adminId: mongoose.Types.ObjectId): Promise<number
       action: faker.helpers.arrayElement(auditActions),
       target: {
         type: 'System',
-        id: new mongoose.Types.ObjectId().toString(),
+        id: new Types.ObjectId().toString(),
         label: faker.lorem.words(2),
       },
       context: {
@@ -590,7 +593,7 @@ async function seedAuditEvents(adminId: mongoose.Types.ObjectId): Promise<number
   return count;
 }
 
-async function seedSiteConfig(adminId: mongoose.Types.ObjectId): Promise<void> {
+async function seedSiteConfig(adminId: Types.ObjectId): Promise<void> {
   console.log('⚙️  Creating site configuration...');
   await SiteConfig.create({
     key: 'global',

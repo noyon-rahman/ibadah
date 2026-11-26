@@ -10,7 +10,7 @@
  * `reasoning_content` delta. We deliberately ignore it: the UI renders plain
  * chat text, and surfacing chain-of-thought would leak internal reasoning.
  */
-import { OpenAI } from 'openai';
+import { OpenAI } from 'openai'; // named export — see openai.provider.ts
 import { OpenAiCompatibleProvider } from './openai-compatible.provider.js';
 import type { DiscoveredModel } from '../ai.types.js';
 

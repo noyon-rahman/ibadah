@@ -1,7 +1,12 @@
 /**
  * Anthropic (Claude) provider implementation with native tool calling.
  */
-import Anthropic from '@anthropic-ai/sdk';
+// Named import, not the default: `@anthropic-ai/sdk` ships dual declarations
+// (`index.d.ts` for `require`, `index.d.mts` for `import`). Both re-export the
+// same `Anthropic` class by name, but Vercel's CJS-mode type resolution sees
+// the default export as the module namespace — not constructable and not a
+// type (TS2351 / TS2709). The named export is identical in both files.
+import { Anthropic } from '@anthropic-ai/sdk';
 import type {
   MessageParam,
   Tool,
