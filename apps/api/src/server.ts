@@ -1,4 +1,4 @@
-import { createApp } from './app.js';
+import { createApp } from './create-app.js';
 import { connectDatabase, disconnectDatabase } from './config/db.js';
 import { env } from './config/env.js';
 import { startScheduledJobs, stopScheduledJobs } from './jobs/scheduler.js';
