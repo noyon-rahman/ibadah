@@ -14,6 +14,28 @@ interface DayPoints {
   total: number;
 }
 
+/**
+ * The projections `dailyPoints` reads from each daily collection. `date` and
+ * the counters are non-optional because the schema declares them with
+ * defaults, so a row from any of these collections always has them.
+ */
+interface DailyPointRow {
+  date: Date;
+  totalPoints?: number | null;
+  pagesRead?: number | null;
+}
+
+/**
+ * Narrow a `.lean()` result to `DailyPointRow[]`.
+ *
+ * This is the boundary where the loosely-typed Mongoose result stops and
+ * typed application data begins — see the comment in `dailyPoints` for why
+ * the result is not trusted to be typed here.
+ */
+function asPointRows(rows: unknown): DailyPointRow[] {
+  return (rows ?? []) as DailyPointRow[];
+}
+
 export const statsService = {
   /**
    * Aggregated daily points across modules within a date range. Used for
@@ -24,7 +46,16 @@ export const statsService = {
     const from = toDayKey(fromStr);
     const to = toDayKey(toStr);
 
-    const [salah, habit, checklist, quran] = await Promise.all([
+    // NOTE: the `.lean()` rows below are deliberately typed through `asPointRows`
+    // rather than inferred. Mongoose's document types depend on emulating a
+    // Query object, and that is exactly what degrades in Vercel's TypeScript
+    // environment — `find()` there can come back loosely typed, which turns
+    // every downstream value into `unknown` and fails the deploy build with
+    // errors like "Argument of type 'unknown' is not assignable to parameter of
+    // type 'string | number | Date'". Naming the three fields this function
+    // actually reads keeps the stats code type-correct regardless of how the
+    // Mongoose generics resolve.
+    const [salahRows, habitRows, checklistRows, quranRows] = await Promise.all([
       SalahDay.find({ user: userObj, date: { $gte: from, $lte: to } })
         .select('date totalPoints')
         .lean(),
@@ -38,6 +69,11 @@ export const statsService = {
         .select('date pagesRead minutesRead')
         .lean(),
     ]);
+
+    const salah = asPointRows(salahRows);
+    const habit = asPointRows(habitRows);
+    const checklist = asPointRows(checklistRows);
+    const quran = asPointRows(quranRows);
 
     const map = new Map<string, DayPoints>();
     const ensure = (d: Date): DayPoints => {
@@ -53,7 +89,7 @@ export const statsService = {
     for (const c of checklist) ensure(c.date).checklist = c.totalPoints ?? 0;
     for (const q of quran) ensure(q.date).quranPages = q.pagesRead ?? 0;
 
-    const out = Array.from(map.values()).map((d) => ({
+    const out: DayPoints[] = Array.from(map.values()).map((d: DayPoints) => ({
       ...d,
       total: d.salah + d.habit + d.checklist,
     }));
@@ -92,10 +128,10 @@ export const statsService = {
     // longest streak in window
     let longest = 0;
     let run = 0;
-    const sorted = Array.from(activeDays).sort();
+    const sorted: string[] = Array.from(activeDays).sort();
     let prev: Date | null = null;
     for (const day of sorted) {
-      const d = new Date(day);
+      const d = toDayKey(day);
       if (prev) {
         const diff = (d.getTime() - prev.getTime()) / (24 * 60 * 60 * 1000);
         run = diff === 1 ? run + 1 : 1;

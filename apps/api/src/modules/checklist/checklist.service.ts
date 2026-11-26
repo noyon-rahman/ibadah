@@ -3,6 +3,7 @@ import { toDayKey } from '../../utils/date.js';
 import { ChecklistDay } from './checklist.model.js';
 import { User } from '../user/user.model.js';
 import type { IChecklistItem } from './checklist.interface.js';
+import type { IChecklistTemplateItem } from '../user/user.interface.js';
 
 export const checklistService = {
   /**
@@ -23,12 +24,18 @@ export const checklistService = {
     const isToday = date.getTime() === today.getTime();
     if (isToday) {
       const u = await User.findById(userObj).select('defaultChecklistItems').lean();
-      const template = u?.defaultChecklistItems ?? [];
+      // Typed explicitly, not inferred: if the `User` document type resolves
+      // loosely (as it can in Vercel's type environment), `?? []` would widen
+      // this to `never[]` and the handler would silently always return an
+      // empty checklist instead of the seeded one.
+      const template: IChecklistTemplateItem[] =
+        (u as { defaultChecklistItems?: IChecklistTemplateItem[] } | null)
+          ?.defaultChecklistItems ?? [];
       if (template.length > 0) {
         const seeded = await ChecklistDay.create({
           user: userObj,
           date,
-          items: template.map((t) => ({
+          items: template.map((t: IChecklistTemplateItem) => ({
             title: t.title,
             rewardPoints: t.rewardPoints,
             completed: false,

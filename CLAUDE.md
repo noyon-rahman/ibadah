@@ -67,11 +67,17 @@ its watch build — otherwise consumers see stale types.
   differs only in `module`/`moduleResolution: "NodeNext"`. Vercel type-checks the
   Function's entry graph in its own environment (different TypeScript and
   node_modules layout), so checks that pass locally can still fail the deploy —
-  that has happened twice, as TS2349 on `helmet`/`express-rate-limit` and TS7006
-  in `stats.service.ts`, both dependency-typing resolution rather than real bugs.
-  `NodeNext` resolves packages the way Node loads them, so every dependency gets
-  its `types` entry. Don't switch the build back to `Bundler`, and don't add
-  `.js`-less extensionless specifiers outside what `NodeNext` accepts.
+  that has happened three times, as TS2349 on `helmet`/`express-rate-limit` and
+  TS7006/TS2769 in `stats.service.ts`, all dependency-typing resolution rather
+  than real bugs. `NodeNext` resolves packages the way Node loads them, so every
+  dependency gets its `types` entry. Don't switch the build back to `Bundler`, and
+  don't add `.js`-less extensionless specifiers outside what `NodeNext` accepts.
+- **Don't infer types from Mongoose results in shared service code.** When
+  Mongoose's generics resolve loosely, `find()`/`lean()` results and `?? []`
+  become `unknown`/`never[]` rather than raising a clear error, so downstream
+  code silently loses its types (and, for `never[]`, can silently produce empty
+  data). Name the fields you read at the boundary — see `asPointRows` in
+  `stats.service.ts` and the template narrowing in `checklist.service.ts`.
 - **Config is validated at startup** in [env.ts](apps/api/src/config/env.ts) (Zod, exits on
   failure). Add new server env vars there and to `.env.example`, not via ad-hoc
   `process.env` reads (the only exceptions are the seed scripts).
